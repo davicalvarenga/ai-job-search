@@ -1,7 +1,13 @@
 """Tests for salary_lookup.py — format_entry, match_score, and search_company."""
 
+import io
+import tempfile
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
+from pathlib import Path
+from unittest import mock
 
+import salary_lookup
 from salary_lookup import (
     format_entry,
     normalize,
@@ -9,6 +15,8 @@ from salary_lookup import (
     extract_core_words,
     match_score,
     search_company,
+    validate_data,
+    collect_validation_issues,
 )
 
 
@@ -163,6 +171,158 @@ class SearchCompanyTests(unittest.TestCase):
         }
         results = search_company(data, "Acme", city="Aarhus")
         self.assertEqual(results, [])
+
+
+class ValidateDataTests(unittest.TestCase):
+    def assert_invalid_data(self, data, expected_message):
+        stderr = io.StringIO()
+        with self.assertRaises(SystemExit) as raised:
+            with redirect_stderr(stderr):
+                validate_data(data)
+
+        self.assertEqual(raised.exception.code, 1)
+        self.assertIn("Error: invalid salary_data.json", stderr.getvalue())
+        self.assertIn(expected_message, stderr.getvalue())
+        self.assertIn("tools/README_SALARY_TOOL.md", stderr.getvalue())
+
+    def test_valid_minimal_data_is_returned(self):
+        data = {"metadata": {}, "companies": [{"company": "Example Corp"}]}
+
+        self.assertIs(validate_data(data), data)
+
+    def test_top_level_value_must_be_object(self):
+        self.assert_invalid_data([], "top-level JSON value must be an object")
+
+    def test_companies_must_be_list(self):
+        self.assert_invalid_data({"companies": {"company": "Example Corp"}}, "'companies' must be a list")
+
+    def test_metadata_must_be_object_when_provided(self):
+        self.assert_invalid_data(
+            {"metadata": [], "companies": [{"company": "Example Corp"}]},
+            "'metadata' must be an object when provided",
+        )
+
+    def test_load_data_reports_json_parse_errors_without_traceback(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            data_file = Path(tmpdir) / "salary_data.json"
+            data_file.write_text('{"companies": [', encoding="utf-8")
+
+            original_data_file = salary_lookup.DATA_FILE
+            salary_lookup.DATA_FILE = data_file
+            try:
+                stderr = io.StringIO()
+                with self.assertRaises(SystemExit) as raised:
+                    with redirect_stderr(stderr):
+                        salary_lookup.load_data()
+            finally:
+                salary_lookup.DATA_FILE = original_data_file
+
+        self.assertEqual(raised.exception.code, 1)
+        self.assertIn("invalid JSON at line", stderr.getvalue())
+        self.assertIn("tools/README_SALARY_TOOL.md", stderr.getvalue())
+
+    def test_company_entry_must_be_object(self):
+        self.assert_invalid_data({"companies": ["Example Corp"]}, "companies[1] must be an object")
+
+    def test_company_name_is_required(self):
+        self.assert_invalid_data({"companies": [{"city": "Aarhus"}]}, "companies[1].company must be a non-empty string")
+
+    def test_company_name_must_not_be_blank(self):
+        self.assert_invalid_data({"companies": [{"company": "  "}]}, "companies[1].company must be a non-empty string")
+
+    def test_city_must_be_string_when_provided(self):
+        self.assert_invalid_data(
+            {"companies": [{"company": "Example Corp", "city": 123}]},
+            "companies[1].city must be a string when provided",
+        )
+
+    def test_categories_must_be_object_when_provided(self):
+        self.assert_invalid_data(
+            {"companies": [{"company": "Example Corp", "categories": []}]},
+            "companies[1].categories must be an object when provided",
+        )
+
+
+class ValidateDataShapeTests(ValidateDataTests):
+    """Category-shape and duplicate-name checks (reuses assert_invalid_data)."""
+
+    def test_malformed_category_value_rejected(self):
+        data = {"companies": [{"company": "Acme", "categories": {"eng": "not_a_dict"}}]}
+        self.assert_invalid_data(data, "must be an object with 'count' and/or 'index'")
+
+    def test_non_numeric_count_rejected(self):
+        data = {
+            "companies": [
+                {"company": "Acme", "categories": {"eng": {"count": "many"}}}
+            ]
+        }
+        self.assert_invalid_data(data, "count must be a number")
+
+    def test_duplicate_company_name_is_warning(self):
+        data = {
+            "companies": [
+                {"company": "Acme"},
+                {"company": "Other Corp"},
+                {"company": "Acme"},
+            ]
+        }
+        errors, warnings = collect_validation_issues(data)
+        self.assertEqual(errors, [])
+        self.assertEqual(len(warnings), 1)
+        self.assertIn("Duplicate company name 'Acme'", warnings[0])
+
+    def test_valid_categories_have_no_issues(self):
+        data = {
+            "companies": [
+                {"company": "Acme", "categories": {"eng": {"count": 5, "index": 108.5}}}
+            ]
+        }
+        errors, warnings = collect_validation_issues(data)
+        self.assertEqual(errors, [])
+        self.assertEqual(warnings, [])
+
+
+class ValidateFlagTests(unittest.TestCase):
+    """End-to-end checks for the --validate pre-flight flow."""
+
+    def _run_validate(self, payload):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            data_file = Path(tmpdir) / "salary_data.json"
+            data_file.write_text(payload, encoding="utf-8")
+            original_data_file = salary_lookup.DATA_FILE
+            salary_lookup.DATA_FILE = data_file
+            argv_patch = mock.patch("sys.argv", ["salary_lookup.py", "--validate"])
+            argv_patch.start()
+            try:
+                stdout = io.StringIO()
+                with self.assertRaises(SystemExit) as raised:
+                    with redirect_stdout(stdout):
+                        salary_lookup.main()
+                return raised.exception.code, stdout.getvalue()
+            finally:
+                argv_patch.stop()
+                salary_lookup.DATA_FILE = original_data_file
+
+    def test_validate_flag_exits_1_on_errors(self):
+        code, out = self._run_validate(
+            '{"companies": [{"company": "Acme", "categories": {"eng": "not_a_dict"}}]}'
+        )
+        self.assertEqual(code, 1)
+        self.assertIn("must be an object with 'count' and/or 'index'", out)
+
+    def test_validate_flag_exits_0_on_clean(self):
+        code, out = self._run_validate(
+            '{"companies": [{"company": "Acme", "categories": {"eng": {"count": 5}}}]}'
+        )
+        self.assertEqual(code, 0)
+        self.assertIn("OK", out)
+
+    def test_validate_flag_exits_0_on_duplicates_only(self):
+        code, out = self._run_validate(
+            '{"companies": [{"company": "Acme"}, {"company": "Acme"}]}'
+        )
+        self.assertEqual(code, 0)
+        self.assertIn("Duplicate company name", out)
 
 
 class UtilityTests(unittest.TestCase):

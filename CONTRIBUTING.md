@@ -33,7 +33,7 @@ Reviews here are empirical. Bug reports are reproduced on master before the fix 
 
 - State the failing case and how to reproduce it.
 - Put CLI tests in `.agents/skills/<name>/cli/tests/` (bun test, network-free where possible); Python tool tests in `tests/`.
-- Run what CI runs: `python3 tools/lint_skills.py` (or `python tools/lint_skills.py` if that is your Python 3 executable), `bun run typecheck` in touched CLIs, and the relevant test suites.
+- Run what CI runs: `python3 tools/lint_skills.py`, `python3 tools/check_framework_version.py`, `bun run typecheck` in touched CLIs, and the relevant test suites.
 
 **Credit norm:** a change that incorporates your actual code gets a `Co-authored-by` trailer; a change written independently from your observation or report gets a named mention in the commit message and PR. Both happen unprompted.
 
@@ -41,8 +41,23 @@ Reviews here are empirical. Bug reports are reproduced on master before the fix 
 
 1. Fork the repo and run `/add-portal` with your local job board - it scaffolds a portal skill matching the shipped contract, and `/scrape` picks it up automatically.
 2. Announce your fork in the pinned [Community forks & adaptations](https://github.com/MadsLorentzen/ai-job-search/discussions/78) discussion so others can find it.
+3. Run the framework update checker (`python3 tools/check_upstream_updates.py`) in your fork to check if upstream has updated any framework files and compare them with your personalized variants.
 
 Market-specific skills are genuinely valuable - they just live in forks, where their maintainers can test them and their users can find them.
+
+## Porting to another AI runtime? Forks too
+
+Claude Code is the reference runtime: it is what the maintainer runs daily and what every methodology change is verified on. A parallel command tree for another runtime (Codex, Antigravity, Gemini CLI, ...) would ship untested on every change - CI cannot run those harnesses - and each accepted runtime makes the next one harder to refuse. It is the same arithmetic that keeps market-specific portals in forks.
+
+What upstream maintains for other runtimes instead:
+
+- The portal search skills in `.agents/skills/` use the portable Agent Skills format (`SKILL.md` per portal) and are auto-discovered by Codex and Antigravity today.
+- The root `AGENTS.md` points any agent at the canonical workflow specs and the profile entry point.
+- Framework instruction files carry `framework_version` markers, so a runtime fork can track methodology changes precisely (`python3 tools/check_upstream_updates.py`).
+
+Announce your runtime fork in the pinned [Community forks & adaptations](https://github.com/MadsLorentzen/ai-job-search/discussions/78) discussion and it gets listed alongside the market adaptations. The proven shape is a thin pointer: reference the specs here instead of copying them, so upstream improvements reach your fork on rebase.
+
+This is a decision, not a dogma: if cross-runtime standards mature to the point where these specs run unmodified elsewhere, or the community's center of gravity moves to runtime forks, the trade-off gets re-evaluated. Background: the architecture thread in [Community forks & adaptations](https://github.com/MadsLorentzen/ai-job-search/discussions/78).
 
 ## Practical notes
 
