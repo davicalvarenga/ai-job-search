@@ -1,8 +1,10 @@
 ---
 name: scrape
 description: >
-  Scrapes Danish job sites for new positions matching your profile. Deduplicates across runs.
-  Triggers on: job scrape, find jobs, search jobs, new jobs, job search, scrape jobs, /scrape
+  Finds new job postings matching your profile via installed portal-search CLIs
+  (LinkedIn, local job boards, and any skills added with /add-portal). Deduplicates
+  across runs. Triggers on: job scrape, find jobs, search jobs, new jobs, job search,
+  scrape jobs, /scrape
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(bun --version), Bash(bun run .agents/skills/*/cli/src/cli.ts *), WebFetch, WebSearch, Agent, AskUserQuestion
 ---
 
@@ -12,7 +14,10 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(bun --version), Bash(bun run 
 
 ## How It Works
 
-This skill searches multiple Danish job sites using targeted queries based on your profile, deduplicates against previously seen jobs and the application tracker, and presents new matches with a quick fit assessment.
+This skill searches job portals using the **installed portal-search CLIs** in
+`.agents/skills/` (plus WebSearch as a fallback), using queries from your profile.
+It deduplicates against previously seen jobs and the application tracker, and
+presents new matches with a quick fit assessment.
 
 ## Invocation
 
@@ -25,6 +30,7 @@ The user triggers this skill by saying things like:
 Optional arguments:
 - A focus area, e.g. "/scrape data science" or "/scrape geophysics"
 - "broad" to run all search categories, e.g. "/scrape broad"
+- "health" to run the portal health check only (Step 4.75), without searching, deduplicating, or presenting jobs - e.g. "/scrape health", or "/scrape health jobnet" to probe one portal even if disabled
 
 ---
 
@@ -54,7 +60,9 @@ If this fails (bun not installed), skip to **1c (WebSearch fallback)** for all p
 
 Discover all installed portal CLI skills by reading every `SKILL.md` found under `.agents/skills/*/SKILL.md`. Each file documents that portal's exact CLI flags and usage examples. **Use each portal's own documented interface — do not guess flags.** This approach automatically includes any new portals added via `/add-portal` without requiring changes to this file.
 
-For each installed portal skill:
+**Honor the `enabled` toggle.** A portal is enabled unless its `SKILL.md` frontmatter sets `enabled: false` (a missing key means enabled — the default). Skip each disabled portal and record it for the Step 5 summary. A fork can thus keep a portal installed but sit out a run without deleting its directory.
+
+For each **enabled** portal skill:
 
 1. Read its `SKILL.md` to find the correct `bun run …` invocation and supported flags.
 2. Translate the query terms from `search-queries.md` into that portal's flag format (e.g. `--key`, `--search-string`, `--query`, filter codes — whatever the portal's SKILL.md specifies).
@@ -62,7 +70,7 @@ For each installed portal skill:
 4. Cap results to ~20 per call using the portal's limit flag.
 5. Use `--format json` for machine-readable output.
 
-Run all portal CLI calls in parallel where possible using the Agent tool. Collect all `results` arrays into a single pool for Step 2.
+Run all portal CLI calls in parallel where possible using the Agent tool. Collect all `results` arrays into a single pool for Step 2, keeping each result tagged with its source portal skill (for Step 2 `detail` lookups).
 
 If a CLI tool exits with a non-zero code, log the error message and continue — do not abort the whole search.
 
@@ -78,10 +86,24 @@ Use the site-specific query strings from `search-queries.md` directly as WebSear
 ### Step 2: Fetch & Parse
 
 For each promising result from Step 1:
-- Use `WebFetch` to retrieve the job posting page
-- Extract: **job title**, **company**, **location**, **posting date** (or "recent"), **URL**, **key requirements** (brief), **application deadline** (if listed)
+
+**From CLI results:** Search output already includes title, company, location, date,
+and URL. For jobs worth a deeper look, fetch full detail with that portal's `detail`
+command (see its SKILL.md — do not guess flags) to extract **key requirements**,
+**application deadline**, and a brief description snippet.
+
+**From WebSearch results:** Use `WebFetch` on the posting URL and extract the same
+fields manually.
+
+For every candidate:
 - Skip if the URL or company+title combo already exists in `seen_jobs.json`
 - Skip if the company+role already appears in `job_search_tracker.csv`
+
+### Step 2.5: Mass-Posting Detection (within this run)
+
+A distribution pattern worth flagging to the user as a caution signal, not as an accusation against the employer - it describes how a listing is being distributed, not a verdict on whether the company is legitimate. It alone proves nothing is wrong (companies do legitimately hire the same role across several cities); flag it so the user can factor it in when deciding whether to invest time, don't downgrade fit or silently exclude the result because of it.
+
+If two or more results in this run's pool (from the same company, or sharing the same req/job ID visible in the URL or title) have substantially the same description and differ only in city/location/title, don't present them as separate rows. Consolidate into a single row and note the spread, e.g. "posted identically across 6 cities (BR, MX, GT)".
 
 ### Step 3: Quick Fit Assessment
 
@@ -103,31 +125,97 @@ For each new job, do a rapid fit check (NOT the full evaluation from `04-job-eva
       "url": "...",
       "first_seen": "YYYY-MM-DD",
       "fit": "high/medium/low",
-      "status": "new/skipped/evaluated/ranked/expired"
+      "status": "new/skipped/evaluated/ranked/expired",
+      "portal": "<source portal skill, e.g. jobindex-search>"
     }
   }
 }
 ```
+
+The `portal` field records which CLI skill produced the job (results are already tagged per portal in Step 1b - persist that tag here). Entries written before this field existed lack it; the health check (Step 4.75) attributes those by matching the URL's domain against each portal's base URL, so do not backfill.
+
+`/rank` extends this schema additively: ranked entries also carry `rank_score` (0–100 overall score), `rank_verdict` (fit band, e.g. "strong fit"), and `rank_date` (ISO date of ranking). The `status` field is set to `"ranked"`. Do not drop any of these fields when re-writing entries.
+
 2. Only present jobs NOT already in the seen list or tracker.
+
+### Step 4.5: Generate Referral Contact Links (High & Medium Fit Only)
+
+For every job from this run with `fit` of **high** or **medium** (skip low-fit jobs),
+build two LinkedIn people-search URLs so the user can find a recruiter or team member to
+reach out to for a referral or a warm intro. This is deliberately a link-generation step,
+not an automated lookup: no scraping, no third-party API, zero runtime dependencies or
+credentials required.
+
+**A. Recruiters / Talent Acquisition (the referral path)**
+```
+https://www.linkedin.com/search/results/people/?keywords=<url-encoded "<Company Name> recruiter">&origin=GLOBAL_SEARCH_HEADER
+```
+
+**B. Role/team peers (informational-outreach / warm-intro path)**
+```
+https://www.linkedin.com/search/results/people/?keywords=<url-encoded "<Company Name> <role keyword>">&origin=GLOBAL_SEARCH_HEADER
+```
+Use a short keyword drawn from the posting's title for `<role keyword>` - e.g. a posting
+titled "AI Program Manager" becomes `"<Company Name> AI Program Manager"`.
+
+Both links are for the user to open and browse themselves - never fetch or scrape the
+LinkedIn people-search result pages programmatically. Never fabricate contacts or claim a
+specific person was found; these are search links, not results.
+
+### Step 4.75: Portal Health Check
+
+Scraper-based portal CLIs rot silently: when a portal changes its markup, the parser usually exits 0 with zero results or with null/garbled fields, and the Step 1c fallback never fires because it only triggers on hard failure. This step catches that from evidence the run already holds.
+
+**Free pass (no extra requests).** For each enabled portal that ran in Step 1b:
+
+- **Degraded scan:** inspect the results it returned this run. Flags: `company` null or empty on every result, empty titles, undecoded entities (`&amp;`) or HTML fragments in titles, URLs that do not point at the portal. Any of these means the parser is half-working and `/scrape` is silently collecting junk.
+- **Yield history:** if the portal returned zero results across all of this run's queries, check whether `seen_jobs.json` holds prior entries from it (via the `portal` field, or by matching URL domains for entries predating the field). A portal that produced jobs on earlier runs and produces nothing now is suspect - the same queries worked before.
+
+**Escalation (bounded, on suspicion only).** A suspect portal gets **one** sentinel probe: run its documented `search` with the example query from its own SKILL.md (that query provably worked when the skill was registered), the portal's limit flag capped at 3, `--format json`. If that returns nothing, retry **once** with a single common word. Only then is the verdict **broken**. A 429 or block page is **never** evidence of breakage - record the portal as **inconclusive (rate-limited)**, back off, and do not retry.
+
+**Verdicts.** Healthy portals get silence - no table, no line. Anything else surfaces in the Step 5 summary as a health line.
+
+**Probe-only mode (`/scrape health`).** Skip Steps 1-4 and this step's free pass (there is no fresh run to scan); instead probe every installed portal directly - enabled ones by default, a disabled one only when named explicitly (e.g. `/scrape health jobnet`). Each portal gets the sentinel probe above, the degraded criteria applied to whatever it returns, and - since the user explicitly asked for diagnosis - one `detail` fetch on the first result of each healthy portal (description must be readable decoded text; a failure downgrades to degraded). Report all statuses in this mode, including healthy. Volume stays bounded: one search, at most one retry, at most one detail per portal.
 
 ### Step 5: Present Results
 
-Present new jobs in a table sorted by fit (high first):
+Present new jobs in a table sorted by fit (high first). When Step 1b skipped
+portals (`enabled: false`), report them with the `skipped (disabled):` line below
+so opting one out stays visible rather than silent; omit the line when nothing
+was skipped. When Step 4.75 found a portal degraded, broken, or inconclusive,
+add one `health:` line per suspect portal (healthy portals get no line); after
+the report, offer to set that portal's `enabled: false` so `/scrape` stops
+running it (and covers it via the Step 1c fallback) until it is fixed - only
+edit the toggle with the user's confirmation, and never edit anything else in
+the skill.
 
 ```
 ## New Job Matches - YYYY-MM-DD
 
 Found X new positions (Y high, Z medium, W low match).
 
+skipped (disabled): <portal-name>, <portal-name>
+
+health: <portal-name> - degraded (company null on all 12 results); parsing anchors in .agents/skills/<portal-name>/url-reference.md
+health: <portal-name> - broken (0 results for the SKILL.md test query and a broader retry); parsing anchors in .agents/skills/<portal-name>/url-reference.md
+
 | # | Fit | Title | Company | Location | Deadline | URL |
 |---|-----|-------|---------|----------|----------|-----|
 | 1 | High | ... | ... | ... | ... | [Link](...) |
+
+If Step 2.5 flagged a mass-posting pattern, note it in the Title cell (e.g. "Frontend Developer (posted in 6 cities)") rather than burying it - it's a signal the user should see at a glance, not just in the detail highlights below.
 
 ### High-Match Highlights
 For each high-match job, add 2-3 bullet points:
 - Why it matches your profile
 - Key requirements to check
-- Any red flags
+- Any red flags (including mass-posting signals from Step 2.5)
+
+### Contacts
+For each high/medium-fit job from Step 4.5, add a short contacts block with the two
+LinkedIn search links:
+- Recruiters/TA search link, for the referral path
+- Role/team-peer search link, for the warm-intro / informational-outreach path
 ```
 
 After presenting, ask:
@@ -145,9 +233,12 @@ If the user decides to apply to any job, add a row to `job_search_tracker.csv`.
 
 ## Important Rules
 
-1. **Never fabricate job postings.** Only present jobs found via actual WebSearch/WebFetch results.
+1. **Never fabricate job postings.** Only present jobs from actual CLI search/detail output or WebSearch/WebFetch results.
 2. **Respect deduplication.** Always check seen_jobs.json AND job_search_tracker.csv before presenting.
 3. **Focus on configured geographic area.** Skip jobs that require relocation or are clearly outside commute range.
 4. **Only open positions.** Skip postings with expired deadlines or those marked as closed.
-5. **Be efficient with WebFetch.** Don't fetch every search result - use titles and snippets to pre-filter before fetching.
-6. **Parallel searches.** Use the Agent tool or parallel WebSearch calls to speed up the search phase.
+5. **Be efficient with detail fetches.** Don't run `detail` or WebFetch on every search hit — pre-filter by title/snippet, then fetch only promising matches.
+6. **Parallel searches.** Run portal CLI searches in parallel; use WebSearch only for gaps the CLIs don't cover.
+7. **No automated people lookups.** Referral contacts (Step 4.5) are LinkedIn search links only - never fetch or scrape LinkedIn people-search result pages programmatically.
+8. **Health checks are bounded and honest.** Step 4.75 spends at most one probe, one retry, and (in `health` mode) one detail fetch per portal - a diagnosis, not a crawl. A rate-limit is never evidence of breakage. Health verdicts come only from observed CLI output; a portal that could not be tested is reported as inconclusive, never guessed. The `enabled` toggle is the only thing the health check may edit, and only with confirmation.
+9. **Flag distribution patterns, never accuse.** The mass-posting signal (Step 2.5) describes how a listing is being distributed, not a claim that the employer is a scam. Never name a company as fraudulent or untrustworthy - present the observation and let the user decide.

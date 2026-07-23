@@ -1,3 +1,5 @@
+import { parse as parseHtml } from "node-html-parser"
+
 export const BASE_URL = "https://jobbank.dk"
 
 export const USER_AGENT =
@@ -13,6 +15,7 @@ export async function fetchWithUA(url: string): Promise<Response> {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     const response = await fetch(url, {
       headers: { "User-Agent": USER_AGENT },
+      signal: AbortSignal.timeout(15000),
     })
     if (response.status === 429 || response.status >= 500) {
       if (attempt === maxRetries) {
@@ -88,6 +91,12 @@ export async function rssFetch(params: Record<string, string | string[]>): Promi
   const url = `${BASE_URL}/job/rss?${searchParams.toString()}`
   const response = await fetchWithUA(url)
   if (!response.ok) {
+    const body = await response.clone().text()
+    if (response.status === 403 && /just a moment|cloudflare|cf-chl/i.test(body)) {
+      throw new Error(
+        "Jobbank is blocking automated requests with Cloudflare bot protection. Skip this portal or use the WebSearch fallback."
+      )
+    }
     throw new Error(`Failed to fetch RSS feed: ${response.status} ${response.statusText}`)
   }
   const xml = await response.text()
@@ -151,4 +160,37 @@ export function extractJobIdFromUrl(url: string): string {
   // URL format: https://jobbank.dk/job/{id}/{company-slug}/{title-slug}
   const match = url.match(/\/job\/(\d+)\//)
   return match ? match[1] : ""
+}
+
+function findJobPosting(value: unknown): Record<string, unknown> | null {
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const jobPosting = findJobPosting(item)
+      if (jobPosting) return jobPosting
+    }
+    return null
+  }
+
+  if (!value || typeof value !== "object") return null
+
+  const record = value as Record<string, unknown>
+  if (record["@type"] === "JobPosting") return record
+
+  return findJobPosting(record["@graph"])
+}
+
+export function parseJobPostingJsonLd(html: string): Record<string, unknown> | null {
+  const root = parseHtml(html)
+  const scripts = root.querySelectorAll('script[type="application/ld+json"]')
+
+  for (const script of scripts) {
+    try {
+      const jobPosting = findJobPosting(JSON.parse(script.text) as unknown)
+      if (jobPosting) return jobPosting
+    } catch {
+      // Invalid JSON-LD should not prevent later scripts from being checked.
+    }
+  }
+
+  return null
 }
