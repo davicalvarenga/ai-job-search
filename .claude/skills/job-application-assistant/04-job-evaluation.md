@@ -44,9 +44,9 @@ How well do the required/preferred skills align with the candidate's capabilitie
 | 40-59 | Partial match, significant upskilling needed |
 | 0-39 | Fundamental mismatch |
 
-**Strong match areas:** [YOUR_PRIMARY_SKILLS]
-**Moderate match areas:** [YOUR_SECONDARY_SKILLS]
-**Weak match areas:** [SKILLS_YOU_LACK]
+**Strong match areas:** Python, FastAPI, Django, SQLAlchemy, SQL (PostgreSQL/MySQL/SQLite), API REST, JavaScript/TypeScript, React, Git/GitHub
+**Moderate match areas:** LangChain, LLM, Machine Learning, IA (demonstrado em projetos pessoais, ainda não em produção profissional); Power BI, Salesforce
+**Weak match areas:** Experiência profissional formal em Data Engineering/Data Science em produção; Cloud/DevOps (AWS/GCP/Azure, Docker/Kubernetes) não mencionados no perfil
 
 ### 2. Experience Match (0-100)
 Does work history align with what they're looking for?
@@ -58,9 +58,9 @@ Does work history align with what they're looking for?
 | 40-59 | Adjacent experience, would need to make the case |
 | 0-39 | Unrelated experience |
 
-**Strong:** [YOUR_DIRECT_EXPERIENCE_DOMAINS]
-**Moderate:** [YOUR_ADJACENT_EXPERIENCE]
-**Entry-level:** [ROLES_WITH_LIMITED_EXPERIENCE]
+**Strong:** Desenvolvimento web full-cycle (No-Code/Bubble.io - modelagem de dados, APIs, ciclo completo); Front-End (React, JS/TS, HTML/CSS)
+**Moderate:** Backend com Python (via projetos pessoais com FastAPI/Django/LangChain - ainda não em cargo profissional dedicado)
+**Entry-level:** Cargos de Backend puro, Dados ou IA/LLM em ambiente profissional (transição em andamento)
 
 ### 3. Behavioral/Culture Fit (0-100)
 Does the role and company culture match the behavioral profile?
@@ -75,10 +75,10 @@ Does the role and company culture match the behavioral profile?
 **Red flags to research:** Department disorganization, work dominated by maintenance over development, poor chemistry with leadership, culture mismatches. Check reviews, media coverage, LinkedIn connections, and network contacts for insider perspective.
 
 ### 4. Location & Logistics (Pass/Fail + Notes)
-- Within commute range: PASS
-- Remote with occasional office: PASS
-- Requires relocation: FAIL (deal-breaker)
-- Frequent international travel: FLAG (discuss with user)
+- Brasília (presencial ou híbrido): PASS
+- Remoto (qualquer localização da empresa): PASS
+- Requires relocation outside Brasília: FAIL (deal-breaker - não deseja se mudar de cidade)
+- Frequent travel: FLAG (discuss with user)
 
 ### 5. Career Alignment & Motivation (0-100)
 Does this role advance career goals and contain tasks that energize?
@@ -91,19 +91,19 @@ Does this role advance career goals and contain tasks that energize?
 | 0-39 | Dead end or backwards step |
 
 **Career goals:**
-- [YOUR_CAREER_GOAL_1]
-- [YOUR_CAREER_GOAL_2]
-- [YOUR_CAREER_GOAL_3]
+- Migrar de Front-End para Backend com Python (FastAPI/Django)
+- Atuar com IA/LLM (LangChain, agentes de IA, RAG) em contexto profissional
+- Crescer na área de Dados (Data Science/Data Engineering)
 
 **Motivation filter:** Evaluate not just whether you *can* do the tasks, but whether the tasks will *energize* you. Consider:
-- Tasks that energize: [YOUR_ENERGIZING_TASKS]
-- Tasks that drain: [YOUR_DRAINING_TASKS]
+- Tasks that energize: construir APIs e sistemas backend, aplicar IA/LLM em projetos reais, trabalhar com modelagem e análise de dados
+- Tasks that drain: ambientes tóxicos, falta de reconhecimento
 - Non-task factors: leadership style, department culture, company values, degree of autonomy
 
 **Life situation alignment:** Consider personal constraints:
-- **Security**: [YOUR_FINANCIAL_SITUATION_CONTEXT]
-- **Flexibility**: [YOUR_SCHEDULE_CONSTRAINTS]
-- **Professional development**: [YOUR_GROWTH_PRIORITIES]
+- **Security**: atualmente empregada (IMMA Experiências), buscando transição de carreira - não em situação de urgência financeira
+- **Flexibility**: disponível para começar imediatamente; fixa em Brasília, aceita remoto
+- **Professional development**: prioriza consolidar Backend/Dados/IA (pós-graduação e certificações em andamento)
 
 ### 6. Salary Benchmark (Optional)
 

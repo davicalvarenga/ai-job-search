@@ -10,66 +10,63 @@ The `site:` query templates in this file are the **WebSearch fallback** — for 
 
 ## Search Sites
 
-Primary (your market's job boards - scaffold one with `/add-portal`):
-- **[YOUR_JOB_BOARD]** - your market's largest general job board
-- **linkedin.com/jobs** - LinkedIn job listings (filter: [YOUR_COUNTRY] / [YOUR_CITY]); also covered by `linkedin-search` CLI
-- **[YOUR_INDUSTRY_JOB_BOARD]** - a niche/industry board for your field (optional)
-- **[YOUR_ADDITIONAL_JOB_BOARD]** - another major board for your market (optional)
+Primary (mercado brasileiro):
+- **gupy.io** - maior plataforma de recrutamento (ATS) do Brasil; coberto pela CLI `gupy-search`
+- **vagas.com.br** - um dos maiores portais generalistas do Brasil; coberto pela CLI `vagas-com-search`
+- **linkedin.com/jobs** - vagas no LinkedIn (filtro: Brasil / Brasília); coberto pela CLI `linkedin-search`
 
-Secondary (company career pages via Google):
-- Direct Google searches with `site:` filters for known target companies
+Secondary (páginas de carreira de empresas via Google):
+- Buscas diretas no Google com filtros `site:` para empresas-alvo específicas
 
 ## Query Categories
 
-Queries are grouped by priority. Each query should be combined with your location terms (e.g. your city, region, or metro area) where the site supports it.
+Queries são agrupadas por prioridade. Cada query deve ser combinada com termos de localização (Brasília, DF, remoto) onde o portal suportar.
 
-### Priority 1: [YOUR_PRIMARY_ROLE_TYPE]
+### Priority 1: Backend Python
 
-These match your strongest and most desired career direction.
-
-```
-site:[YOUR_JOB_BOARD] "[YOUR_PRIMARY_JOB_TITLE]" [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "[YOUR_KEY_SKILL]" [YOUR_CITY]
-site:linkedin.com/jobs "[YOUR_PRIMARY_JOB_TITLE]" [YOUR_COUNTRY]
-```
-
-### Priority 2: [YOUR_DOMAIN_EXPERTISE]
-
-These match your domain expertise.
+Alinhado com a direção de carreira mais desejada por Laura (transição para Backend).
 
 ```
-site:[YOUR_JOB_BOARD] [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] OR [YOUR_REGION]
-site:[YOUR_JOB_BOARD] [YOUR_DOMAIN_KEYWORD_2] [YOUR_COUNTRY]
-site:linkedin.com/jobs [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] [YOUR_COUNTRY]
+site:gupy.io "desenvolvedor backend" Python Brasília
+site:vagas.com.br "desenvolvedor backend" Python Brasília OR remoto
+site:linkedin.com/jobs "backend developer" Python Brasil
 ```
 
-### Priority 3: [YOUR_ADJACENT_ROLE_TYPE]
+### Priority 2: IA / LLM / Dados
 
-Adjacent roles you could pivot into.
-
-```
-site:[YOUR_JOB_BOARD] "[YOUR_ADJACENT_TITLE_1]" [YOUR_KEY_SKILL] [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "[YOUR_ADJACENT_TITLE_2]" [YOUR_KEY_SKILL] [YOUR_CITY]
-```
-
-### Priority 4: Broader Technical / Consulting
-
-Wider net for general technical roles.
+Alinhado com os projetos pessoais em LangChain/LLM e as certificações em Data Fundamentals.
 
 ```
-site:[YOUR_JOB_BOARD] [YOUR_KEY_SKILL] developer [YOUR_CITY]
-site:linkedin.com/jobs "[YOUR_KEY_SKILL] developer" [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "technical consultant" [YOUR_DOMAIN] [YOUR_CITY]
+site:gupy.io "engenheiro de IA" OR "desenvolvedor IA" LLM Brasília OR remoto
+site:vagas.com.br "analista de dados" OR "cientista de dados" Python Brasil
+site:linkedin.com/jobs "AI engineer" OR "LLM" Python Brasil
+```
+
+### Priority 3: Full Stack / Python (adjacent)
+
+Papéis adjacentes que aproveitam tanto a experiência em Front-End quanto o Python.
+
+```
+site:gupy.io "desenvolvedor full stack" Python React Brasília OR remoto
+site:vagas.com.br "desenvolvedor full stack" Python Brasil
+```
+
+### Priority 4: Front-End / Desenvolvimento Web (broader net)
+
+Rede mais ampla, aproveitando a experiência profissional atual em Front-End/No-Code.
+
+```
+site:gupy.io "desenvolvedor front-end" OR "desenvolvedor web" Brasília OR remoto
+site:vagas.com.br "desenvolvedor front-end" React Brasil
+site:linkedin.com/jobs "front-end developer" React Brasil
 ```
 
 ## Location Filter
 
-When evaluating results, verify the job location is within reasonable commute distance from your home. Define acceptable areas:
-- [YOUR_CITY] and surrounding areas
-- [ACCEPTABLE_AREA_1]
-- [ACCEPTABLE_AREA_2]
-- [BORDERLINE_AREA] (borderline - ~X min by transit)
-- [TOO_FAR_AREA] (too far)
+Laura não deseja se mudar de cidade. Áreas aceitáveis:
+- Brasília, DF e região (presencial ou híbrido)
+- Remoto (qualquer localização da empresa, dentro do Brasil ou fora, desde que 100% remoto)
+- Qualquer vaga que exija mudança de cidade/relocação: **excluir (deal-breaker)**
 
 ## Date Filter
 

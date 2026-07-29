@@ -1,18 +1,18 @@
-%% Example CV - [YOUR_NAME]
-%% Comprehensive overview of all competencies, experience, and achievements.
-%% Use as a master reference when tailoring role-specific CVs.
+%% CV Mestre - Laura Lacort Zimmermann
+%% Visão abrangente de todas as competências, experiências e conquistas.
+%% Usar como referência-mestre ao adaptar CVs por vaga.
 %%
-%% SETUP: Run /setup to populate this with your actual information.
-%% Compile with: lualatex main_example.tex
-%% (pdflatex often fails on modern MiKTeX with fontawesome5 font-expansion errors.)
+%% Compile com: lualatex main_example.tex
+%% (pdflatex frequentemente falha em instalações MiKTeX modernas com erros de
+%% expansão de fonte do fontawesome5.)
 
 \documentclass[11pt,a4paper,sans]{moderncv}
 \moderncvstyle{banking}
 \moderncvcolor{blue}
 
-% Force both first and last name AND section headings to render in moderncv
-% blue (color1). Default banking on lualatex+MiKTeX leaves these black, which
-% looks inconsistent with the rest of the blue accent scheme.
+% Força nome e sobrenome, além dos títulos de seção, a renderizar na cor azul
+% do moderncv (color1). Por padrão, em lualatex+MiKTeX, ficam pretos, o que
+% destoa do restante do esquema de cores em azul.
 \renewcommand*{\firstnamestyle}[1]{{\fontsize{34}{36}\bfseries\upshape\color{color1}#1}}
 \renewcommand*{\lastnamestyle}[1]{{\fontsize{34}{36}\bfseries\upshape\color{color1}#1}}
 \renewcommand*{\sectionstyle}[1]{{\sectionfont\color{color1}#1}}
@@ -24,146 +24,174 @@
     linkcolor=blue,
     filecolor=magenta,
     urlcolor=blue,
-    pdftitle={[YOUR_NAME] - CV},
+    pdftitle={Laura Lacort Zimmermann - CV},
     pdfpagemode=FullScreen,
 }
 \usepackage[scale=0.80]{geometry}
 \usepackage{import}
 
-% personal data
-\name{[First]}{[Last]}
-\address{[Your Address, City, Country]}{}{}
-\phone[mobile]{[+XX XXXXXXXXXX]}
-\email{[your.email@example.com]}
-\extrainfo{\href{[https://linkedin.com/in/your-profile]}{LinkedIn}, \href{[https://github.com/your-username]}{GitHub}}
+% dados pessoais
+\name{Laura}{Lacort Zimmermann}
+\address{Brasília, DF, Brasil}{}{}
+\email{lauralacortzimermann@gmail.com}
+\extrainfo{\href{https://linkedin.com/in/laurazimrn}{LinkedIn}, \href{https://github.com/laurazimrn}{GitHub}}
 
 \begin{document}
 
 \makecvtitle
 
 % ============================================================
-%     PROFILE STATEMENT
+%     DECLARAÇÃO DE PERFIL
 % ============================================================
 
 \vspace{6pt}
-\small{[Write a 3-5 line profile statement tailored to the role you're applying for. Focus on what makes you uniquely qualified. Example: "Data scientist with a PhD in [field] and X years of industry experience. Combines deep domain expertise in [domain] with strong applied machine learning and Python development skills. Experienced in developing end-to-end ML pipelines, from data ingestion to stakeholder-facing dashboards."]}
+\small{Desenvolvedora com bacharelado em Ciência da Computação e pós-graduação em Engenharia de Software, com experiência prática em desenvolvimento Front-End e desenvolvimento web. Em transição ativa para as áreas de Backend e Dados/IA, combinando experiência profissional em ciclo completo de desenvolvimento com projetos pessoais em Python (FastAPI, Django, LangChain).}
 
 % ============================================================
-%     CORE COMPETENCIES
+%     COMPETÊNCIAS PRINCIPAIS
 % ============================================================
 
-\section{Core Competencies}
+\section{Competências Principais}
 \vspace{1pt}
 \begin{itemize}
 
-\item \textbf{[Skill Category 1]}: [Specific skills, frameworks, tools. Be concrete.]
+\item \textbf{Backend Python}: FastAPI, Django, SQLAlchemy, API REST
 
-\item \textbf{[Skill Category 2]}: [Specific skills, frameworks, tools.]
+\item \textbf{Banco de Dados}: PostgreSQL, MySQL, SQLite, SQL, modelagem relacional
 
-\item \textbf{[Skill Category 3]}: [Specific skills, frameworks, tools.]
+\item \textbf{IA \& LLM}: LangChain, LLM, Machine Learning, Inteligência Artificial
 
-\item \textbf{[Skill Category 4]}: [Domain expertise, methods, approaches.]
+\item \textbf{Frontend}: JavaScript, TypeScript, HTML5, CSS3, React, Tailwind CSS
 
-\item \textbf{[Skill Category 5]}: [Tools, platforms, software.]
+\item \textbf{Ferramentas}: Git, GitHub, Jira, Trello, Power BI, Salesforce, Figma, Postman, Insomnia, Linux, Bubble.io
 
 \end{itemize}
 
 % ============================================================
-%     PROFESSIONAL EXPERIENCE
+%     EXPERIÊNCIA PROFISSIONAL
 % ============================================================
 
-\section{Professional Experience}
+\section{Experiência Profissional}
 \vspace{3pt}
 \begin{itemize}
 
-% --- Most Recent Role ---
-\item{\cventry{[YYYY--Present]}{[Job Title]}{[Company]}{[City, Country]}{}{\vspace{1pt}
+\item{\cventry{2024--Atual}{Desenvolvedora No Code}{IMMA Experiências}{Brasil}{}{\vspace{1pt}
 \begin{itemize}
-    \item [Achievement or responsibility 1 - be specific, use numbers where possible]
-    \item [Achievement or responsibility 2]
-    \item [Achievement or responsibility 3]
-    \item [Achievement or responsibility 4]
+    \item Desenvolvimento de aplicações web completas utilizando Bubble.io, com foco em modelagem de banco de dados relacional e definição de estruturas de dados
+    \item Aplicação de regras de negócio e integridade referencial no design do banco de dados
+    \item Integração com APIs REST externas e construção de fluxos de automação
+    \item Entrega de interfaces responsivas alinhadas a requisitos funcionais
+    \item Atuação em ciclo completo de desenvolvimento: levantamento de requisitos, modelagem, implementação e testes
+    \item Uso diário de Jira para acompanhamento de demandas e projetos
 \end{itemize}}}
 
 \vspace{3pt}
 
-% --- Previous Role ---
-\item{\cventry{[YYYY--YYYY]}{[Job Title]}{[Company]}{[City, Country]}{}{\vspace{1pt}
+\item{\cventry{2023}{Desenvolvedora Front End}{Agência Sete Digital}{Brasil}{}{\vspace{1pt}
 \begin{itemize}
-    \item [Achievement or responsibility 1]
-    \item [Achievement or responsibility 2]
-    \item [Achievement or responsibility 3]
+    \item Desenvolvimento de interfaces web responsivas com HTML, CSS e JavaScript
+    \item Consumo de bibliotecas de componentes UI: Material UI, Tailwind CSS e Bootstrap
+    \item Depuração e correção de bugs em ambiente de produção
+    \item Colaboração com equipe em ambiente ágil e versionamento com Git/GitHub
 \end{itemize}}}
 
 \vspace{3pt}
 
-% --- Earlier Role ---
-\item{\cventry{[YYYY--YYYY]}{[Job Title]}{[Company]}{[City, Country]}{}{\vspace{1pt}
+\item{\cventry{2022}{Desenvolvedora Web}{Eficaz Marketing}{Brasil}{}{\vspace{1pt}
 \begin{itemize}
-    \item [Achievement or responsibility 1]
-    \item [Achievement or responsibility 2]
+    \item Criação e manutenção de componentes reutilizáveis para interfaces web
+    \item Implementação de layouts responsivos seguindo padrões de UI/UX
+    \item Versionamento de código com Git/GitHub
+\end{itemize}}}
+
+\vspace{3pt}
+
+\item{\cventry{2021--2022}{Estágio Front End}{Eficaz Marketing}{Brasil}{}{\vspace{1pt}
+\begin{itemize}
+    \item Desenvolvimento de interfaces web com HTML, CSS e JavaScript
+    \item Manutenção de sites e aplicativos
+    \item Versionamento de código com Git/GitHub
 \end{itemize}}}
 
 \end{itemize}
 
 % ============================================================
-%     EDUCATION
+%     PROJETOS PESSOAIS
 % ============================================================
 
-\section{Education}
+\section{Projetos Pessoais}
 \vspace{1pt}
 \begin{itemize}
 
-\item{\cventry{[YYYY--YYYY]}{[Degree] in [Field]}{[Institution]}{[City, Country]}{}{\vspace{1pt}
-Thesis: ``[Thesis Title].'' [Brief description of research focus.]
+\item \textbf{Local AI Agent com Ollama \& LangChain}: agente de IA local em Python com LangChain, Ollama e ChromaDB (RAG). Processa arquivos CSV e realiza raciocínio contextual sem APIs externas.
+
+\item \textbf{Notes API with AI}: API RESTful com FastAPI e SQLAlchemy integrada ao Ollama (llama3) para sumarização de notas. CRUD completo, Pydantic v2 e testes com Pytest.
+
+\item \textbf{FastAPI App with PostgreSQL}: aplicação de quiz com FastAPI, PostgreSQL e SQLAlchemy. Modelagem relacional e documentação interativa de endpoints.
+
+\item \textbf{Django REST API}: API RESTful com Django REST Framework, arquitetura modular. Banco SQLite com suporte a PostgreSQL.
+
+\item Disponíveis em: \href{https://github.com/laurazimrn}{github.com/laurazimrn}
+
+\end{itemize}
+
+% ============================================================
+%     EDUCAÇÃO
+% ============================================================
+
+\section{Educação}
+\vspace{1pt}
+\begin{itemize}
+
+\item{\cventry{2026--2027}{Especialização em Matemática, Educação e Tecnologia}{IFB}{Brasil}{}{\vspace{1pt}
+Em andamento.
 }}
 
 \vspace{3pt}
 
-\item{\cventry{[YYYY--YYYY]}{[Degree] in [Field]}{[Institution]}{[City, Country]}{}{\vspace{1pt}
-[Brief description or key topics.]
+\item{\cventry{2024--2025}{Pós-graduação em Engenharia de Software}{UTFPR}{Brasil}{}{\vspace{1pt}
+Concluído.
+}}
+
+\vspace{3pt}
+
+\item{\cventry{2021--2023}{Bacharelado em Ciência da Computação}{UNIVEM}{Brasil}{}{\vspace{1pt}
+Concluído.
 }}
 
 \end{itemize}
 
 % ============================================================
-%     LANGUAGES
+%     IDIOMAS
 % ============================================================
 
-\section{Languages}
+\section{Idiomas}
 \vspace{1pt}
 \begin{itemize}
-\item [Language 1] (native), [Language 2] (fluent), [Language 3] (intermediate).
+\item Português (nativo), Inglês (intermediário), Espanhol (básico).
 \end{itemize}
 
 % ============================================================
-%     PUBLICATIONS (optional)
+%     CERTIFICAÇÕES
 % ============================================================
 
-\section{Publications}
+\section{Certificações}
 \vspace{1pt}
 \begin{itemize}
-\item [Author(s)] ([Year]). [Title]. [Journal/Conference]. \href{[DOI_URL]}{DOI link}
+\item{\textbf{AI Fluency Framework \& Foundations} -- Anthropic (mar 2026).}
+\item{\textbf{Data Fundamentals} -- IBM (fev 2026).}
+\item{\textbf{Python Essentials 1} -- Cisco Networking Academy (dez 2025).}
+\item{\textbf{Python Essentials 2, JavaScript Essentials 1, Fundamentos de Data Science e IA} -- em andamento.}
 \end{itemize}
 
 % ============================================================
-%     HONORS AND AWARDS (optional)
+%     REFERÊNCIAS
 % ============================================================
 
-\section{Honors and Awards}
+\section{Referências}
 \vspace{1pt}
 \begin{itemize}
-\item{\textbf{[Award Name]} -- [Event/Organization] ([Year]).}
-\end{itemize}
-
-% ============================================================
-%     REFERENCES
-% ============================================================
-
-\section{References}
-\vspace{1pt}
-\begin{itemize}
-\item{Available upon request.}
+\item{Disponíveis mediante solicitação.}
 \end{itemize}
 
 \end{document}

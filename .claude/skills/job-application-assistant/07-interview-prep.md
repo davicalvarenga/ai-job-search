@@ -12,32 +12,63 @@ Structure answers as: **Situation** (context), **Task** (your responsibility), *
 
 Keep answers to 1-2 minutes. Be specific. End with what you learned or would do differently.
 
-## Ready-Made STAR Examples
+## STAR Candidates (Complete Manually)
 
-<!-- These are populated by /setup from your actual experience. Below are templates showing the format. -->
+<!-- O CV fonte lista responsabilidades e ações, mas não detalha o "problema/contexto" (S) nem o resultado
+mensurável (R) de cada uma. Para não inventar contexto ou métricas que Laura não confirmou, os itens
+abaixo ficam como stubs - complete S/T/A/R com os detalhes reais antes de usar em entrevista. -->
 
-### 1. [PROJECT_NAME] ([SKILL_DEMONSTRATED])
-**S:** [CONTEXT - what was happening, what was the problem]
-**T:** [YOUR RESPONSIBILITY - what you specifically needed to do]
-**A:** [WHAT YOU DID - specific actions, tools, methods]
-**R:** [OUTCOME - measurable results, adoption, impact]
-**Use for:** "[QUESTION_TYPE_1]", "[QUESTION_TYPE_2]"
+### 1. Modelagem de banco de dados relacional na IMMA Experiências (Backend/Dados)
+**Source:** CV - Desenvolvedora No Code, IMMA Experiências
+**What happened:** Modelagem de banco de dados relacional e definição de estruturas de dados, com aplicação de regras de negócio e integridade referencial, no desenvolvimento de aplicações Bubble.io.
+**Why it matters:** Boa base para perguntas sobre modelagem de dados, design de banco de dados e trade-offs de integridade referencial - relevante para vagas de Backend/Dados.
+**S/T/A/R stub:**
+- Situation:
+- Task:
+- Action:
+- Result:
 
-### 2. [PROJECT_NAME] ([SKILL_DEMONSTRATED])
-**S:** [CONTEXT]
-**T:** [YOUR RESPONSIBILITY]
-**A:** [WHAT YOU DID]
-**R:** [OUTCOME]
-**Use for:** "[QUESTION_TYPE_1]", "[QUESTION_TYPE_2]"
+### 2. Integração de APIs REST e automação de fluxos (Backend)
+**Source:** CV - Desenvolvedora No Code, IMMA Experiências
+**What happened:** Integração com APIs REST externas e construção de fluxos de automação.
+**Why it matters:** Serve para perguntas sobre integração de sistemas, tratamento de erros de API externa e automação de processos.
+**S/T/A/R stub:**
+- Situation:
+- Task:
+- Action:
+- Result:
 
-### 3. [PROJECT_NAME] ([SKILL_DEMONSTRATED])
-**S:** [CONTEXT]
-**T:** [YOUR RESPONSIBILITY]
-**A:** [WHAT YOU DID]
-**R:** [OUTCOME]
-**Use for:** "[QUESTION_TYPE_1]", "[QUESTION_TYPE_2]"
+### 3. Agente de IA local com LangChain, Ollama e ChromaDB (IA/LLM)
+**Source:** Projeto pessoal - Local AI Agent com Ollama & LangChain
+**What happened:** Construção de um agente de IA local em Python que processa arquivos CSV e realiza raciocínio contextual via RAG, sem depender de APIs externas.
+**Why it matters:** Principal exemplo prático de IA/LLM aplicada - útil para perguntas sobre projetos de IA, RAG e por que está migrando para essa área.
+**S/T/A/R stub:**
+- Situation:
+- Task:
+- Action:
+- Result:
 
-<!-- Add more STAR examples as needed. Aim for 4-6 covering different competencies. -->
+### 4. API RESTful com FastAPI, SQLAlchemy e Ollama (Backend + IA)
+**Source:** Projeto pessoal - Notes API with AI
+**What happened:** Construção de uma API RESTful com FastAPI e SQLAlchemy, integrada ao Ollama (llama3) para sumarização de notas, com CRUD completo, Pydantic v2 e testes automatizados com Pytest.
+**Why it matters:** Bom exemplo de projeto backend completo (API + testes + integração com LLM) para perguntas técnicas sobre arquitetura de API e boas práticas.
+**S/T/A/R stub:**
+- Situation:
+- Task:
+- Action:
+- Result:
+
+### 5. Depuração e correção de bugs em produção (Front-End)
+**Source:** CV - Desenvolvedora Front End, Agência Sete Digital
+**What happened:** Depuração e correção de bugs em ambiente de produção, em colaboração com equipe em ambiente ágil.
+**Why it matters:** Útil para perguntas sobre resolução de problemas sob pressão e trabalho em equipe ágil.
+**S/T/A/R stub:**
+- Situation:
+- Task:
+- Action:
+- Result:
+
+<!-- Complete os stubs acima com detalhes reais (situação/contexto e resultado) antes de uma entrevista. -->
 
 ## Common Tough Questions
 

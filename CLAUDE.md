@@ -1,10 +1,7 @@
-# Job Application Assistant for [YOUR_NAME]
-
-<!-- SETUP: This file is populated by running /setup -->
-<!-- After running /setup, all [PLACEHOLDER] tokens will be replaced with your actual information -->
+# Job Application Assistant for Laura Lacort Zimmermann
 
 ## Role
-This repo is a job application workspace. Claude acts as a career advisor and application assistant for [YOUR_NAME], helping with:
+This repo is a job application workspace. Claude acts as a career advisor and application assistant for Laura Lacort Zimmermann, helping with:
 1. **Job fit evaluation** - Assess job postings against your profile (skills, experience, behavioral traits)
 2. **CV tailoring** - Adapt existing CV templates (LaTeX/moderncv) to target specific roles
 3. **Cover letter writing** - Draft targeted cover letters using existing templates (LaTeX)
@@ -16,67 +13,80 @@ This repo is a job application workspace. Claude acts as a career advisor and ap
 <!-- This section is auto-populated by /setup. You can also fill it in manually. -->
 
 ### Identity
-- **Name:** [YOUR_NAME]
-- **Location:** [YOUR_CITY], [YOUR_COUNTRY] ([YOUR_COMMUTE_CONSTRAINTS])
-- **Languages:** [YOUR_LANGUAGES]
-- **CV language:** [YOUR_CV_LANGUAGE] <!-- English unless your market expects otherwise; /setup asks -->
+- **Name:** Laura Lacort Zimmermann
+- **Location:** Brasília, DF, Brasil (não deseja se mudar de cidade; aceita remoto ou presencial em Brasília)
+- **Contact:** lauralacortzimermann@gmail.com | linkedin.com/in/laurazimrn | github.com/laurazimrn (telefone não informado)
+- **Languages:** Português (nativo), Inglês (intermediário), Espanhol (básico)
+- **CV language:** Português
 
-- **Status:** [YOUR_EMPLOYMENT_STATUS]
-- **LinkedIn headline:** "[YOUR_LINKEDIN_HEADLINE]"
+- **Status:** Empregada (Desenvolvedora No Code na IMMA Experiências), disponível para começar imediatamente
+- **LinkedIn headline:** "Cientista da Computação"
 
 ### Education
-<!-- List your degrees, most recent first -->
-- **[DEGREE_LEVEL] in [FIELD]** ([YEAR_START]-[YEAR_END]) - [INSTITUTION]
-  - Thesis: "[THESIS_TITLE]"
-  - Topics: [KEY_TOPICS]
+- **Especialização em Matemática, Educação e Tecnologia** (2026-2027, em andamento) - IFB
+- **Pós-graduação em Engenharia de Software** (2024-2025, concluído) - UTFPR
+- **Bacharelado em Ciência da Computação** (2021-2023, concluído) - UNIVEM
 
 ### Professional Experience
-<!-- List your roles, most recent first -->
-- **[JOB_TITLE]** ([START_DATE] - [END_DATE]) - **[COMPANY]** ([LOCATION])
-  - [KEY_RESPONSIBILITY_1]
-  - [KEY_RESPONSIBILITY_2]
-  - [KEY_ACHIEVEMENT]
+- **Desenvolvedora No Code** (Jan 2024 - Atual) - **IMMA Experiências**
+  - Desenvolvimento de aplicações web completas em Bubble.io, com foco em modelagem de banco de dados relacional e definição de estruturas de dados
+  - Aplicação de regras de negócio e integridade referencial no design do banco de dados; integração com APIs REST externas e construção de fluxos de automação
+  - Atuação em ciclo completo de desenvolvimento (levantamento de requisitos, modelagem, implementação, testes); uso diário de Jira
+- **Desenvolvedora Front End** (Jan 2023 - Set 2023) - **Agência Sete Digital**
+  - Desenvolvimento de interfaces web responsivas com HTML, CSS e JavaScript; consumo de bibliotecas de UI (Material UI, Tailwind CSS, Bootstrap)
+  - Depuração e correção de bugs em ambiente de produção; colaboração em equipe ágil com Git/GitHub
+- **Desenvolvedora Web** (Jan 2022 - Abr 2022) - **Eficaz Marketing**
+  - Criação e manutenção de componentes reutilizáveis; layouts responsivos seguindo padrões de UI/UX; versionamento com Git/GitHub
+- **Estágio Front End** (Abr 2021 - Jan 2022) - **Eficaz Marketing**
+  - Desenvolvimento de interfaces web com HTML, CSS e JavaScript; manutenção de sites e aplicativos; versionamento com Git/GitHub
+
+### Independent Projects
+- **Local AI Agent com Ollama & LangChain**: agente de IA local em Python com LangChain, Ollama e ChromaDB (RAG); processa arquivos CSV e realiza raciocínio contextual sem APIs externas
+- **Notes API with AI**: API RESTful com FastAPI e SQLAlchemy integrada ao Ollama (llama3) para sumarização de notas; CRUD completo, Pydantic v2, testes com Pytest
+- **FastAPI App with PostgreSQL**: aplicação de quiz com FastAPI, PostgreSQL e SQLAlchemy; modelagem relacional e documentação interativa de endpoints
+- **Django REST API**: API RESTful com Django REST Framework, arquitetura modular, banco SQLite com suporte a PostgreSQL
+- Disponíveis em github.com/laurazimrn
 
 ### Technical Skills
-- **Primary:** [YOUR_PRIMARY_SKILLS]
-- **Secondary:** [YOUR_SECONDARY_SKILLS]
-- **Domain:** [YOUR_DOMAIN_EXPERTISE]
-- **Software:** [YOUR_TOOLS_AND_SOFTWARE]
+- **Primary:** Python, FastAPI, Django, SQLAlchemy, SQL (PostgreSQL, MySQL, SQLite), API REST
+- **Secondary:** JavaScript, TypeScript, HTML5, CSS3, React, Tailwind CSS, LangChain, LLM, Machine Learning, Inteligência Artificial
+- **Domain:** Desenvolvimento No-Code (Bubble.io), modelagem de banco de dados relacional, integração de APIs, automação de fluxos, transição ativa para Backend/Dados/IA
+- **Software:** Git, GitHub, Jira, Trello, Power BI, Salesforce, Figma, Postman, Insomnia, Linux
 
 ### Certifications
-<!-- List relevant certifications with dates -->
-- **[CERTIFICATION_NAME]** - [HOURS]h - completed [DATE]
+- **AI Fluency Framework & Foundations** - Anthropic - concluído mar 2026
+- **Data Fundamentals** - IBM - concluído fev 2026
+- **Python Essentials 1** - Cisco Networking Academy - concluído dez 2025
+- **Python Essentials 2** - Cisco Networking Academy - em andamento
+- **JavaScript Essentials 1** - Cisco Networking Academy - em andamento
+- **Fundamentos de Data Science e IA** - Data Science Academy - em andamento
 
 ### Publications
-<!-- List peer-reviewed publications, if any -->
-- [AUTHOR_LIST] ([YEAR]). [TITLE]. [JOURNAL].
+- Nenhuma até o momento.
 
 ### Awards
-<!-- List relevant awards, hackathons, competitions -->
-- [AWARD_NAME] - [EVENT] ([YEAR])
+- Nenhum até o momento.
 
 ### Behavioral Profile
-<!-- Your behavioral assessment results (PI, DISC, Myers-Briggs, or self-assessment) -->
-- **[TRAIT_1]** - [DESCRIPTION]
-- **[TRAIT_2]** - [DESCRIPTION]
-- **Strengths:** [YOUR_STRENGTHS]
-- **Growth areas:** [YOUR_GROWTH_AREAS]
-- **Thrives in:** [YOUR_IDEAL_ENVIRONMENT]
+<!-- Autoavaliação; nenhum teste formal (DISC/PI/etc.) aplicado -->
+- **Adaptável** - confortável em diferentes tipos de ambiente (startup ágil, empresa estruturada, remoto, time pequeno); ritmo de decisão varia com a situação
+- **Colaborativa e transparente** - prefere trabalhar em equipe de forma colaborativa, organizada e transparente
+- **Strengths:** adaptabilidade a diferentes contextos, trabalho em equipe organizado, ciclo completo de desenvolvimento (requisitos -> testes)
+- **Growth areas:** consolidando a transição de Front-End para Backend/Dados/IA (em andamento via pós-graduação, certificações e projetos pessoais)
+- **Thrives in:** ambientes saudáveis, com reconhecimento pelo trabalho e comunicação transparente
 
 ### What Excites You
-<!-- What motivates you professionally -->
-- [PASSION_1]
-- [PASSION_2]
+- Construir sistemas backend e APIs (Python, FastAPI, Django)
+- Aplicar IA/LLM em projetos reais (LangChain, agentes de IA, RAG)
 
 ### Target Sectors
-<!-- Industries and companies you're targeting -->
-- [SECTOR_1]: [EXAMPLE_COMPANIES]
-- [SECTOR_2]: [EXAMPLE_COMPANIES]
+- Tecnologia/Software: empresas com times de engenharia backend ou dados
+- IA/LLM: empresas aplicando IA generativa em produto
 
 ### Deal-breakers
-<!-- Hard constraints on job search -->
-- [DEALBREAKER_1]
-- [DEALBREAKER_2]
+- Ambientes tóxicos
+- Falta de reconhecimento pelo trabalho
+- Exigência de mudança de cidade (não deseja sair de Brasília)
 
 ## Repo Structure
 - `cv/` - LaTeX CV variants (moderncv template, banking style)
