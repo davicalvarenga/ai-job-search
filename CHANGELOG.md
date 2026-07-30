@@ -13,7 +13,68 @@ per-file diff commands.
 
 ## [Unreleased]
 
-_Changes landed on `master` since the last release will be listed here._
+## [1.1.0] - 2026-07-30
+
+### Security & privacy
+
+- **Personalized custom-template files are now gitignored regardless of engine** - the
+  ignore rules broadened from `cv/main_*.tex` to `cv/main_*.*` (and likewise for cover
+  letters), so a fork using a Typst or other non-LaTeX template no longer commits
+  personalized `main_<company>.typ` files to a public fork. The `*_example.tex` files stay
+  tracked. If you registered a custom template before this release, check
+  `git status` once after updating. (#238)
+- **Dependency review is live, for forks too** - the repo's Dependency graph is now enabled,
+  so the CI `dependency-review` job actually blocks PRs that introduce dependencies with
+  known high-severity vulnerabilities, and the job is no longer gated to the upstream repo:
+  forks get the same check, self-activating if the fork enables Dependency graph
+  (it warns-and-passes otherwise). (#254)
+
+### Added
+
+- **freehire-search: full descriptions come back with the search** - `search` now calls
+  freehire's agent search endpoint (`/api/v1/agent/jobs/search`), which serves each hit's
+  complete description instead of the search index's truncated preview. A 20-role search is
+  one request rather than 1 + 20 `detail` calls, and `/scrape`'s Step 2 no longer needs a
+  per-hit fetch for this portal. `--description-format markdown|text|html` (default
+  `markdown`) selects the rendering; `table` and `plain` output is unchanged. (#251)
+- **Custom templates: any compile-to-PDF toolchain (Typst, ...)** - `/add-template` no longer
+  hardcodes a `lualatex`/`xelatex`/`pdflatex` engine enum. Custom templates now declare a
+  source extension and a full compile command, so Typst (`typst compile`) registers the same
+  way a custom LaTeX template does. Stock CV/cover letter templates stay LaTeX,
+  unchanged. (#238)
+- **Application-form fields as an optional third `/apply` artifact** - when a posting's
+  application form asks screening questions, `/apply` can now offer a prep sheet of
+  grounded answers alongside the CV and cover letter. Opt-in; the default two-document
+  output never changes. (#212)
+- **Confirmed facts write back to the profile** - when `/apply` or `/interview` surfaces a
+  fact the user confirms (a skill, a date, a project detail), it is written back to the
+  profile files in the same turn instead of being lost with the conversation. (#211)
+- **CV methodology: in-progress qualifications and tenure-vs-output** - `05-cv-templates.md`
+  gains explicit rules for stating in-progress certifications/degrees honestly and for
+  checking claimed tenure against visible output (`framework_version` 1.2.1 -> 1.3.0). (#210)
+- **Scraper flags mass-posting and recycled-listing patterns** - `/scrape` marks postings
+  that look bulk-posted or recycled so they don't eat evaluation effort. (#207)
+- **Retry contract pinned in CI** - all six portal CLIs now carry 429/5xx retry-backoff
+  tests covering every fetch wrapper, so a silent regression in retry behavior trips
+  CI. (#246)
+- **README: the extension model, documented** - new Customization subsection "Extending the
+  framework: portals, templates, criteria - and borrowing from other forks": the three
+  extension points, the copy-one-folder pattern for borrowing a portal skill from another
+  fork with a read-the-code-first checklist, and why there is deliberately no installer
+  (the manual copy is the security model). Prompted by discussion #249.
+
+### Fixed
+
+- `/rank` shortlist and below-threshold tables include each posting's URL. (#236)
+- `convert_salary_excel.py`: count/index columns pair by category name instead of
+  adjacency (#219), standalone count columns store as counts (#230), and ragged rows from
+  dimension-less spreadsheets no longer crash with an IndexError (#252).
+- `cover.cls`: duplicate package imports removed and the `\ProvidesClass` name fixed to
+  match the filename, silencing a class-name-mismatch warning. (#252)
+- Portal CLI type-checking pinned to concrete `@types/bun` / `@bunli/*` versions to stop
+  environmental CI type-drift. (#226)
+- `freehire-search` points at freehire.me after the service's domain migration. (#229)
+- `verify_pdf.py`'s missing-poppler error now includes per-OS install hints. (#252)
 
 ## [1.0.0] - 2026-07-22
 
