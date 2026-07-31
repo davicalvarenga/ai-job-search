@@ -13,6 +13,23 @@ per-file diff commands.
 
 ## [Unreleased]
 
+### Security & privacy
+
+- **The gitignore guard now covers two more personal-data rules** - `security_guards.py`
+  requires `cover_letters/Cover_*.*` (the uppercase cover-letter naming variant `/apply`
+  recognizes) and `cv/*.txt` (ATS text extractions of tailored CVs) in `.gitignore`, so a
+  future change weakening either rule fails CI instead of silently making personal files
+  trackable. Both rules were already present in `.gitignore`; only the guard lagged.
+
+### Fixed
+
+- Removed the vestigial `cover_letters/OpenFonts/cover.cls` - an unreferenced remnant of
+  the original font bundle that, since #252's class rename, ambiguously declared the same
+  `cover` class as the real `cover_letters/cover.cls`.
+- Added regression tests pinning #252's ragged-row bounds fix in
+  `tools/convert_salary_excel.py` (dimension-less workbooks read in `read_only` mode
+  yield rows shorter than the header).
+
 ## [1.1.0] - 2026-07-30
 
 ### Security & privacy

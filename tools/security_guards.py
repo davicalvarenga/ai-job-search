@@ -50,7 +50,11 @@ REQUIRED_IGNORE_RULES = [
     "**/job_scraper/seen_jobs.json",
     "cv/main_*.*",
     "!cv/main_example.tex",
+    # ATS text extractions (/apply step 5d) carry the CV's full text.
+    "cv/*.txt",
     "cover_letters/cover_*.*",
+    # /apply also recognizes the uppercase Cover_* naming variant.
+    "cover_letters/Cover_*.*",
     "documents/cv/**",
     "documents/linkedin/**",
     "documents/diplomas/**",
