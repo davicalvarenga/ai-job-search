@@ -64,7 +64,9 @@ function renderTable(cards: JobCard[]): string {
 export async function runSearch(opts: SearchOpts): Promise<number> {
   try {
     const data = await jsonFetch<GupySearchResponse>(buildUrl(opts))
-    let cards = (data?.data ?? []).map(toCard).filter((c) => withinJobage(c, opts.jobage))
+    // A 404 on the search endpoint means the API moved, not "no matches" — fail loudly.
+    if (!data) throw new Error(`Search endpoint returned 404 (${API_BASE}); the Gupy API may have moved`)
+    let cards = (data.data ?? []).map(toCard).filter((c) => withinJobage(c, opts.jobage))
     if (opts.limit !== undefined && opts.limit >= 0) cards = cards.slice(0, opts.limit)
 
     if (opts.format === "table") {

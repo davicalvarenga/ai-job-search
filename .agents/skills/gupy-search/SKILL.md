@@ -79,13 +79,13 @@ All errors are written to **stderr** as `{ "error": "...", "code": "..." }` and 
 
 ## Notes
 
-- Data source is `employability-portal.gupy.io`'s JSON API — the same backend the
+- Data source is `portal.gupy.io/api/job-search/jobs` — the same JSON backend the
   Next.js portal app calls client-side. It is a real, paginated REST API (not scraped
   HTML), so results are clean and structured.
 - `--location` filters on Gupy's `city` field with what appears to be an exact/near-exact
   match — it will not catch remote roles headquartered elsewhere. For "my city or
   remote" searches, run two separate searches: one with `-l "<your city>"`
   and one with `--remote remote`, rather than combining both flags in one call.
-- `robots.txt` for `portal.gupy.io` and `employability-portal.gupy.io` has no
+- `robots.txt` for `portal.gupy.io` has no
   disallow rules — this integration only reads public data, no ToS restriction found.
 - Job IDs are numeric (e.g. `11602614`) — pass them as-is to `detail`.

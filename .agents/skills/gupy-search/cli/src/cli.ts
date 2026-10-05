@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // Self-contained CLI for searching jobs on Gupy's public "Portal de Vagas" (Brazil),
-// via the JSON API the portal app itself calls (employability-portal.gupy.io).
+// via the JSON API the portal app itself calls (portal.gupy.io/api/job-search).
 // No external CLI framework, so it runs anywhere `bun` is available with zero
 // install beyond the repo clone.
 

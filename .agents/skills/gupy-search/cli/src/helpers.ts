@@ -1,9 +1,11 @@
-// Data source: Gupy's public "Portal de Vagas" REST API at employability-portal.gupy.io.
-// This is the JSON backend the Next.js portal app itself calls client-side
-// (found via the app's baseURL config) — no authentication required, real
-// pagination, real filters. No HTML parsing needed.
+// Data source: Gupy's public "Portal de Vagas" job-search API at portal.gupy.io.
+// This is the JSON backend the Next.js portal app itself calls client-side —
+// no authentication required, real pagination, real filters. No HTML parsing needed.
+// The previous host (employability-portal.gupy.io/api/v1/jobs) started answering
+// 404 in early October 2026; this is an internal portal address, not a documented
+// API, so it may move again (see url-reference.md "Maintenance").
 
-export const API_BASE = "https://employability-portal.gupy.io/api/v1/jobs"
+export const API_BASE = "https://portal.gupy.io/api/job-search/jobs"
 
 export function writeError(error: string, code: string): void {
   process.stderr.write(JSON.stringify({ error, code }) + "\n")
@@ -44,7 +46,7 @@ export async function jsonFetch<T>(url: string): Promise<T | null> {
 
 export interface GupyRawJob {
   id: number
-  companyId: number
+  companyId?: number
   name: string
   description: string
   careerPageName: string
@@ -52,10 +54,10 @@ export interface GupyRawJob {
   type: string
   publishedDate: string | null
   applicationDeadline: string | null
-  isRemoteWork: boolean
+  isRemoteWork?: boolean
   city: string | null
   state: string | null
-  country: string | null
+  country?: string | null
   jobUrl: string
   workplaceType: string | null
 }

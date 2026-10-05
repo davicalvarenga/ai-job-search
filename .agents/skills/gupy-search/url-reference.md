@@ -14,15 +14,19 @@ The API host was found by downloading the page's JS chunks
 c=()=>o().create({baseURL:r((0,n.nS)()?"http://portal-production-application.portal-prod.svc.cluster.local":"https://employability-portal.gupy.io")})
 ```
 
-`employability-portal.gupy.io` is the production API host reachable from outside the
-cluster.
+`employability-portal.gupy.io` was the production API host reachable from outside the
+cluster until early October 2026, when `/api/v1/jobs` started answering a generic
+nginx 404. The portal now serves the same search from its own host at
+`https://portal.gupy.io/api/job-search/jobs`, with the same query parameters and the
+same `data`/`pagination` response wrapper. It is an internal portal address, not a
+documented API, so it may move again — see "Maintenance" below.
 
 ## Endpoints
 
 ### Search
 
 ```
-GET https://employability-portal.gupy.io/api/v1/jobs
+GET https://portal.gupy.io/api/job-search/jobs
 ```
 
 Query parameters (found via chunk source + live probing):
@@ -70,10 +74,14 @@ Response shape:
 }
 ```
 
+The example above was captured on the old `employability-portal` host. On the
+current host, `country` and `companyId` are no longer returned and `isRemoteWork`
+may be absent — use `workplaceType` instead. The CLI treats all three as optional.
+
 Notes on fields:
 - `city`/`state` are often empty strings for remote roles — derive display location
   from `workplaceType === "remote"` first, falling back to `city, state`, falling back
-  to `country`.
+  to `country` when present.
 - `description` contains raw text with embedded HTML-ish fragments and unescaped
   entities in places; strip tags and decode entities before display.
 - `jobUrl` points to the *company's own* Gupy subdomain (`<company>.gupy.io`), not
@@ -82,7 +90,7 @@ Notes on fields:
 ### Detail
 
 ```
-GET https://employability-portal.gupy.io/api/v1/jobs/<id>
+GET https://portal.gupy.io/api/job-search/jobs/<id>
 ```
 
 Returns the same object shape as a single search result (no `data`/`pagination`
@@ -91,17 +99,15 @@ wrapper — the job object directly). 404 on unknown/expired IDs.
 ## Access rules
 
 - `https://portal.gupy.io/robots.txt` — `Disallow:` is empty (nothing blocked).
-- `https://employability-portal.gupy.io/robots.txt` was not separately checked (it's
-  an API host, not indexed content), but the portal itself imposes no crawl
-  restriction and this integration only calls the same JSON endpoint the portal's
-  own frontend calls.
+- The API now lives on `portal.gupy.io` itself, so the rule above covers it; this
+  integration only calls the same JSON endpoint the portal's own frontend calls.
 - `https://www.gupy.io/robots.txt` (the marketing site, different host) disallows
   only blog pagination/preview paths — irrelevant here since we never hit that host.
 
 ## Maintenance
 
-If Gupy changes their frontend build and this API disappears or moves, re-derive the
-host by:
+If Gupy changes their frontend build and this API disappears or moves (symptom: the
+CLI's `search` exits 1 with "Search endpoint returned 404"), re-derive the host by:
 1. Fetching `https://portal.gupy.io/job-search/term=x` and extracting `buildId` from
    the HTML.
 2. Fetching `/_next/static/chunks/*.js` referenced in that page.
