@@ -31,7 +31,8 @@ function buildUrl(opts: SearchOpts): string {
   if (opts.query) params.set("jobName", opts.query)
   if (opts.location) params.set("city", opts.location)
   const wt = workplaceTypeParam(opts.remote)
-  if (wt) params.set("workplaceTypes", wt)
+  // The current endpoint ignores the old plural `workplaceTypes` param.
+  if (wt) params.set("workplaceType", wt)
   params.set("limit", String(RESULTS_PER_PAGE))
   params.set("offset", String((opts.page - 1) * RESULTS_PER_PAGE))
   return `${API_BASE}?${params.toString()}`

@@ -35,7 +35,7 @@ Query parameters (found via chunk source + live probing):
 |---|---|---|
 | `jobName` | string | Keyword search against job title/description. |
 | `city` | string | Exact-ish city match, e.g. `Goiânia`. URL-encode accented characters. |
-| `workplaceTypes` | string | One of `remote`, `hybrid`, `on-site`. **Singular param name despite the plural** — `workplaceTypes[]=remote` (array-bracket form) returns HTTP 400. |
+| `workplaceType` | string | One of `remote`, `hybrid`, `on-site`. The old host took `workplaceTypes` (plural); the current endpoint silently ignores that name and returns every workplace type. |
 | `limit` | number | Page size. Portal UI uses 10; API accepts higher (tested up to 100 without error). |
 | `offset` | number | 0-indexed result offset for pagination. |
 
