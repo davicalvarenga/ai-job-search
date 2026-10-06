@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // Self-contained CLI for searching jobs on Gupy's public "Portal de Vagas" (Brazil),
-// via the JSON API the portal app itself calls (employability-portal.gupy.io).
+// via the JSON API the portal app itself calls (portal.gupy.io/api/job-search).
 // No external CLI framework, so it runs anywhere `bun` is available with zero
 // install beyond the repo clone.
 
@@ -37,7 +37,7 @@ const HELP = `gupy-cli — search jobs on Gupy's public Portal de Vagas (Brazil)
 
 USAGE
   bun run src/cli.ts search [flags]
-  bun run src/cli.ts detail <id> [--format json|plain]
+  bun run src/cli.ts detail <url> [--format json|plain]   (url = the search result's url field)
 
 SEARCH FLAGS
   --query, -q <text>      Keywords (job title, skill, or role). Recommended.
@@ -54,7 +54,7 @@ EXAMPLES
   bun run src/cli.ts search -q "desenvolvedor júnior" -l "Goiânia" --format table
   bun run src/cli.ts search -q "estágio TI" --remote remote --jobage 14 --format table
   bun run src/cli.ts search -q "automação n8n" --format table
-  bun run src/cli.ts detail 11602614 --format plain
+  bun run src/cli.ts detail "https://<empresa>.gupy.io/job/<código>" --format plain
 `
 
 async function main(): Promise<number> {
@@ -110,7 +110,7 @@ async function main(): Promise<number> {
   if (cmd === "detail") {
     const id = (flags._ as string[])[1]
     if (!id) {
-      process.stderr.write(JSON.stringify({ error: "detail requires an <id>", code: "NO_ID" }) + "\n")
+      process.stderr.write(JSON.stringify({ error: "detail requires a job <url> from a search result", code: "NO_ID" }) + "\n")
       return 1
     }
     const fmt = (flags.format as string) || "json"

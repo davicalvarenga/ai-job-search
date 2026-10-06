@@ -1,9 +1,11 @@
-// Data source: Gupy's public "Portal de Vagas" REST API at employability-portal.gupy.io.
-// This is the JSON backend the Next.js portal app itself calls client-side
-// (found via the app's baseURL config) — no authentication required, real
-// pagination, real filters. No HTML parsing needed.
+// Data source: Gupy's public "Portal de Vagas" job-search API at portal.gupy.io.
+// This is the JSON backend the Next.js portal app itself calls client-side —
+// no authentication required, real pagination, real filters. No HTML parsing needed.
+// The previous host (employability-portal.gupy.io/api/v1/jobs) started answering
+// 404 in early October 2026; this is an internal portal address, not a documented
+// API, so it may move again (see url-reference.md "Maintenance").
 
-export const API_BASE = "https://employability-portal.gupy.io/api/v1/jobs"
+export const API_BASE = "https://portal.gupy.io/api/job-search/jobs"
 
 export function writeError(error: string, code: string): void {
   process.stderr.write(JSON.stringify({ error, code }) + "\n")
@@ -13,15 +15,15 @@ const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
   "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
-/** Fetch JSON with exponential backoff on 429/5xx. Returns null on a 404. */
-export async function jsonFetch<T>(url: string): Promise<T | null> {
+/** GET with exponential backoff on 429/5xx. Returns null on a 404. */
+async function fetchWithRetry(url: string, accept: string): Promise<Response | null> {
   const maxRetries = 6
   let delay = 500
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     const response = await fetch(url, {
       headers: {
         "User-Agent": UA,
-        Accept: "application/json",
+        Accept: accept,
       },
     })
     if (response.status === 429 || response.status >= 500) {
@@ -37,14 +39,26 @@ export async function jsonFetch<T>(url: string): Promise<T | null> {
     if (!response.ok) {
       throw new Error(`Request failed: ${response.status} ${response.statusText}`)
     }
-    return (await response.json()) as T
+    return response
   }
   throw new Error("Request failed after max retries")
 }
 
+/** Fetch JSON with exponential backoff on 429/5xx. Returns null on a 404. */
+export async function jsonFetch<T>(url: string): Promise<T | null> {
+  const response = await fetchWithRetry(url, "application/json")
+  return response ? ((await response.json()) as T) : null
+}
+
+/** Fetch an HTML page with exponential backoff on 429/5xx. Returns null on a 404. */
+export async function htmlFetch(url: string): Promise<string | null> {
+  const response = await fetchWithRetry(url, "text/html")
+  return response ? await response.text() : null
+}
+
 export interface GupyRawJob {
   id: number
-  companyId: number
+  companyId?: number
   name: string
   description: string
   careerPageName: string
@@ -52,10 +66,10 @@ export interface GupyRawJob {
   type: string
   publishedDate: string | null
   applicationDeadline: string | null
-  isRemoteWork: boolean
+  isRemoteWork?: boolean
   city: string | null
   state: string | null
-  country: string | null
+  country?: string | null
   jobUrl: string
   workplaceType: string | null
 }
@@ -101,6 +115,11 @@ function locationOf(job: GupyRawJob): string | null {
   return parts.length ? parts.join(", ") : job.country || null
 }
 
+/** Turn an HTML-ish description fragment into plain text. */
+export function htmlToText(html: string): string {
+  return decodeHtmlEntities(stripTags(html))
+}
+
 export function toCard(job: GupyRawJob): JobCard {
   return {
     id: String(job.id),
@@ -115,7 +134,7 @@ export function toCard(job: GupyRawJob): JobCard {
 export function toDetail(job: GupyRawJob): JobDetail {
   return {
     ...toCard(job),
-    description: decodeHtmlEntities(stripTags(job.description)) || null,
+    description: htmlToText(job.description) || null,
     workplaceType: job.workplaceType,
     applicationDeadline: job.applicationDeadline,
     applyUrl: job.jobUrl,

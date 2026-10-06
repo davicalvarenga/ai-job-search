@@ -42,11 +42,14 @@ Key flags:
 ### Fetch full job detail
 
 ```bash
-bun run .agents/skills/gupy-search/cli/src/cli.ts detail <id> [--format json|plain]
+bun run .agents/skills/gupy-search/cli/src/cli.ts detail <url> [--format json|plain]
 ```
 
-`id` is the numeric job ID from `search` results (e.g. `11602614`). Returns the full
-description, workplace type, application deadline, and apply URL.
+`url` is the `url` field from a `search` result — the employer's own Gupy career page
+(`https://<empresa>.gupy.io/job/<código>`). Gupy no longer serves job detail by numeric
+id, so a bare id is rejected. Returns the full description, workplace type, application
+deadline, and apply URL, read from the job data embedded in that page. Only
+`https://*.gupy.io` URLs are fetched.
 
 ## Usage examples
 
@@ -63,8 +66,8 @@ bun run .agents/skills/gupy-search/cli/src/cli.ts search -l "Goiânia" --format 
 # Automation / n8n roles nationwide
 bun run .agents/skills/gupy-search/cli/src/cli.ts search -q "automação n8n" --format table
 
-# Full details for a specific job
-bun run .agents/skills/gupy-search/cli/src/cli.ts detail 11602614 --format plain
+# Full details for a specific job (pass the url field from a search result)
+bun run .agents/skills/gupy-search/cli/src/cli.ts detail "https://<empresa>.gupy.io/job/<código>" --format plain
 ```
 
 ## Output formats
@@ -79,13 +82,14 @@ All errors are written to **stderr** as `{ "error": "...", "code": "..." }` and 
 
 ## Notes
 
-- Data source is `employability-portal.gupy.io`'s JSON API — the same backend the
+- Data source is `portal.gupy.io/api/job-search/jobs` — the same JSON backend the
   Next.js portal app calls client-side. It is a real, paginated REST API (not scraped
   HTML), so results are clean and structured.
 - `--location` filters on Gupy's `city` field with what appears to be an exact/near-exact
   match — it will not catch remote roles headquartered elsewhere. For "my city or
   remote" searches, run two separate searches: one with `-l "<your city>"`
   and one with `--remote remote`, rather than combining both flags in one call.
-- `robots.txt` for `portal.gupy.io` and `employability-portal.gupy.io` has no
+- `robots.txt` for `portal.gupy.io` has no
   disallow rules — this integration only reads public data, no ToS restriction found.
-- Job IDs are numeric (e.g. `11602614`) — pass them as-is to `detail`.
+- Job IDs are numeric (e.g. `11602614`) and identify a job in results, but `detail` takes
+  the result's `url`, not the id.
