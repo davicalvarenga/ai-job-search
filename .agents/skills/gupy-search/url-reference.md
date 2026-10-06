@@ -89,12 +89,24 @@ Notes on fields:
 
 ### Detail
 
+The old `GET https://employability-portal.gupy.io/api/v1/jobs/<id>` went away with the
+search endpoint, and `portal.gupy.io/api/job-search/jobs/<id>` returns an HTML page,
+not JSON. Clicking a result on the portal opens the employer's career page instead:
+
 ```
-GET https://portal.gupy.io/api/job-search/jobs/<id>
+https://<empresa>.gupy.io/job/<base64>?jobBoardSource=gupy_portal
 ```
 
-Returns the same object shape as a single search result (no `data`/`pagination`
-wrapper — the job object directly). 404 on unknown/expired IDs.
+`<base64>` decodes to `{"jobId":<id>,"source":"gupy_portal"}` — this is the `jobUrl`
+of each search result. A browser session on that page makes no JSON request for the
+job itself (only feature flags, cookie banner, analytics and auth calls), so the job
+data is server-rendered into the HTML. `detail` fetches the page and reads, in order:
+
+1. the Next.js `<script id="__NEXT_DATA__">` payload (job object with `description`,
+   plus `responsibilities` / `prerequisites` when present);
+2. a schema.org `JobPosting` in `<script type="application/ld+json">`.
+
+`detail` only fetches `https://*.gupy.io` URLs and rejects any other host.
 
 ## Access rules
 

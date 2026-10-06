@@ -15,15 +15,15 @@ const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
   "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
-/** Fetch JSON with exponential backoff on 429/5xx. Returns null on a 404. */
-export async function jsonFetch<T>(url: string): Promise<T | null> {
+/** GET with exponential backoff on 429/5xx. Returns null on a 404. */
+async function fetchWithRetry(url: string, accept: string): Promise<Response | null> {
   const maxRetries = 6
   let delay = 500
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     const response = await fetch(url, {
       headers: {
         "User-Agent": UA,
-        Accept: "application/json",
+        Accept: accept,
       },
     })
     if (response.status === 429 || response.status >= 500) {
@@ -39,9 +39,21 @@ export async function jsonFetch<T>(url: string): Promise<T | null> {
     if (!response.ok) {
       throw new Error(`Request failed: ${response.status} ${response.statusText}`)
     }
-    return (await response.json()) as T
+    return response
   }
   throw new Error("Request failed after max retries")
+}
+
+/** Fetch JSON with exponential backoff on 429/5xx. Returns null on a 404. */
+export async function jsonFetch<T>(url: string): Promise<T | null> {
+  const response = await fetchWithRetry(url, "application/json")
+  return response ? ((await response.json()) as T) : null
+}
+
+/** Fetch an HTML page with exponential backoff on 429/5xx. Returns null on a 404. */
+export async function htmlFetch(url: string): Promise<string | null> {
+  const response = await fetchWithRetry(url, "text/html")
+  return response ? await response.text() : null
 }
 
 export interface GupyRawJob {
@@ -103,6 +115,11 @@ function locationOf(job: GupyRawJob): string | null {
   return parts.length ? parts.join(", ") : job.country || null
 }
 
+/** Turn an HTML-ish description fragment into plain text. */
+export function htmlToText(html: string): string {
+  return decodeHtmlEntities(stripTags(html))
+}
+
 export function toCard(job: GupyRawJob): JobCard {
   return {
     id: String(job.id),
@@ -117,7 +134,7 @@ export function toCard(job: GupyRawJob): JobCard {
 export function toDetail(job: GupyRawJob): JobDetail {
   return {
     ...toCard(job),
-    description: decodeHtmlEntities(stripTags(job.description)) || null,
+    description: htmlToText(job.description) || null,
     workplaceType: job.workplaceType,
     applicationDeadline: job.applicationDeadline,
     applyUrl: job.jobUrl,

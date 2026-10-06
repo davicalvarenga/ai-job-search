@@ -35,15 +35,30 @@ describe("gupy-cli search", () => {
 });
 
 describe("gupy-cli detail", () => {
-  test("returns full detail for a real job id", async () => {
+  test("returns full detail for a real job url", async () => {
     const search = await runCLI(["search", "-q", "desenvolvedor", "--limit", "1"]);
     const searchData = parseJSON<SearchResult>(search);
-    const id = searchData.results[0].id;
+    const { id, url } = searchData.results[0];
 
-    const result = await runCLI(["detail", id]);
+    const result = await runCLI(["detail", url]);
     const detail = parseJSON<JobCard & { description: string | null }>(result);
     expect(detail.id).toBe(id);
+    expect(detail.title).toBeTruthy();
     expect(detail.description).toBeTruthy();
+  });
+
+  test("rejects a bare numeric id with a pointer to the url field", async () => {
+    const result = await runCLI(["detail", "11602614"]);
+    expect(result.exitCode).toBe(1);
+    const err = JSON.parse(result.stderr);
+    expect(err.code).toBe("BAD_ID");
+  });
+
+  test("refuses to fetch a non-Gupy host", async () => {
+    const result = await runCLI(["detail", "https://example.com/job/eyJqb2JJZCI6MX0="]);
+    expect(result.exitCode).toBe(1);
+    const err = JSON.parse(result.stderr);
+    expect(err.code).toBe("BAD_ID");
   });
 
   test("exits 1 with a JSON error on a missing id", async () => {
