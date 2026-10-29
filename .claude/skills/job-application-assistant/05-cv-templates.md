@@ -76,7 +76,8 @@ Expected output: `Output written on main_<company>_<role>.pdf (2 pages, ...)`. A
 \address{[YOUR_ADDRESS]}{}{}
 \phone[mobile]{[YOUR_PHONE]}
 \email{[YOUR_EMAIL]}
-\extrainfo{\href{[YOUR_LINKEDIN_URL]}{LinkedIn}, \href{[YOUR_GITHUB_URL]}{GitHub}}
+% Print the URLs as visible text: link text alone ("LinkedIn") never reaches the ATS text layer.
+\extrainfo{\href{[YOUR_LINKEDIN_URL]}{[YOUR_LINKEDIN_URL]} \textbar{} \href{[YOUR_GITHUB_URL]}{[YOUR_GITHUB_URL]}}
 
 \begin{document}
 \makecvtitle
@@ -131,7 +132,7 @@ Section headings such as `\section{Core Competencies}`, `Professional Experience
 ### Profile Statement / Elevator Pitch (Best Practice)
 This is the most important section to customize. It appears right after `\makecvtitle`.
 
-Write 5-7 lines that function as an "elevator pitch": a concise, compelling introduction explaining why you're qualified for *this specific role*. Focus on what the employer gains from hiring you.
+Write 3-4 lines that function as an "elevator pitch": a concise, compelling introduction explaining why you're qualified for *this specific role*. Focus on what the employer gains from hiring you.
 
 When the role sits outside your home domain, **lead with the domain-transfer argument** - the one or two sentences connecting your background to their problem (e.g. wave physics to radar signal processing) belong in the profile statement's opening, not buried in the cover letter. It is the strongest card a domain-changer holds; play it first.
 
@@ -179,7 +180,8 @@ Claiming a credential not yet held is a factual misstatement, and it is the kind
 ### Professional Experience
 - Rewrite bullet points to emphasize aspects most relevant to the target role
 - Use 4-6 bullets for most recent role, 3-4 for previous, 2-3 for older
-- **Emphasize measurable results** where possible: "Reduced processing time by X%", "Model adopted by the team"
+- **Every bullet is CAR, not a job description** (see `03-writing-style.md`, "Experience bullets"): problem, action with the tool named, result. Metrics come only from `01-candidate-profile.md`; a role with no recorded metric gets a concrete qualitative result, never an invented number
+- **Dates as month/year** for every role (`Aug 2025 - Jan 2026`, `Jan 2026 - Present`), single ASCII hyphen (see "Date fields must be ASCII ranges")
 
 #### Check tenure against visible output
 
@@ -213,6 +215,9 @@ Wherever the CV names a verifiable artifact - a public project, a hackathon entr
 
 ### Honors and Awards
 - Keep format brief, one line each
+
+### Certifications
+- Each certification carries its issuer and year (`Git and GitHub (Alura, 2023)`), even when collapsed into a single line
 
 ### References
 - List 2-4 references with name, title, company, and contact

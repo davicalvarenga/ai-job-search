@@ -85,6 +85,22 @@ The cover letter is **not a CV repetition**. It should be forward-looking:
 - Be specific: numbers, tools, outcomes
 - Vary the structure (not every bullet starts the same way)
 
+### Experience bullets: CAR, never a job description
+Recruiters already know what the role does; a bullet must show what the candidate **delivered**. Build each experience bullet as **Context -> Action -> Result** (CAR):
+- **Context:** the problem that existed (one clause, can be implicit).
+- **Action:** what the candidate did, with the tool or technology named.
+- **Result:** the number or the concrete effect. A number beats an adjective; an honest qualitative effect ("eliminated the manual search") beats an invented number.
+
+**Job-description test:** if the bullet would be true for anyone who ever held the same title ("Provided first-level technical support"), it is a job description. Rewrite it with the candidate's own tool, scope or result, or cut it.
+
+```
+Job description: Provided first-level technical support to users.
+CAR:             Resolved around 20 L1/L2 tickets a week for 300 staff, most on first contact, using remote desktop tooling.
+```
+
+- **Numbers come only from `01-candidate-profile.md`.** Never derive, round up, or estimate a metric while drafting. Where the profile marks a figure as the candidate's estimate, keep it approximate ("around", "up to"), never precise. Where the profile says a figure is unknown, use the qualitative effect.
+- No personal pronouns in CV bullets ("I", "my team"); start from the verb.
+
 ## Language for Different Role Types
 
 ### Technical/ML roles
