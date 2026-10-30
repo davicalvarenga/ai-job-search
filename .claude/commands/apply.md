@@ -419,4 +419,5 @@ Check whether the posting or the portal it came from asks for free-text fields t
 
 ### Next Steps
 - **Submitted?** `/outcome <company>` moves the `drafted` row to `applied` and starts the per-application record that `/setup` later uses to calibrate the fit framework.
+- **Recruiter on LinkedIn?** Once submitted, offer to draft the post-application message from `.claude/skills/job-application-assistant/10-linkedin-profile.md` ("Outreach messages"), grounded in one concrete result from the submitted CV. The candidate sends it; never send it for them. Record the person in the row's `contact_person`.
 - **Interview scheduled?** `/interview` builds a stage-specific prep pack from this posting and the documents you just created.
