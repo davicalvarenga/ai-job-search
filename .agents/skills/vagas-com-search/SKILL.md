@@ -34,6 +34,8 @@ robots.txt tighten further.** Run it on your own responsibility.
 bun run .agents/skills/vagas-com-search/cli/src/cli.ts search --query "<text>" [flags]
 ```
 
+Query syntax: the query becomes a URL slug (accents, quotes and punctuation are stripped), so phrase quoting has no effect; no OR (`OR` is searched as a literal word), so send one plain term per call.
+
 Key flags:
 - `--query <text>` / `-q <text>` — **required.** Job title or keyword. Vagas.com's
   search URLs are keyword-slug based (`/vagas-de-<slug>`), so this drives the URL

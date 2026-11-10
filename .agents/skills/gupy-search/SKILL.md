@@ -26,6 +26,8 @@ it runs with just `bun`.
 bun run .agents/skills/gupy-search/cli/src/cli.ts search [flags]
 ```
 
+Query syntax: phrase quoting has no effect (quoted, unquoted and reordered words return the same results); `OR` returns no results, so send one plain term per call.
+
 Key flags:
 - `--query <text>` / `-q <text>` — keyword search (title, skill, or role). Recommended.
 - `--location <text>` / `-l <text>` — city name filter, e.g. `"Goiânia"`. Matches Gupy's
