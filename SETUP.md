@@ -26,7 +26,7 @@ On Windows, `py --version` is often the most reliable check. If your system expo
 
 ### Bun (for job search tools)
 
-The job portal CLIs (four Danish portals plus the country-agnostic `linkedin-search` and `freehire-search` tools) are written in TypeScript and run with Bun.
+The job portal CLIs you copy in from [community-portals](https://github.com/ai-job-search-dev/community-portals) are written in TypeScript and run with Bun. Without any, `/scrape` uses WebSearch and Bun is not needed.
 
 - macOS/Linux:
 
@@ -189,18 +189,22 @@ Or manually: fork on GitHub, then clone your fork.
 > personalization there is still the right move. Everything else in this guide works
 > identically either way.
 
-## 3. Install job search CLI dependencies
-Run these from the repository root.
+## 3. Add job portals and install their CLI dependencies
+AI Job Search ships no job-board CLIs. Portal skills live in [community-portals](https://github.com/ai-job-search-dev/community-portals), one folder per board under `portals/<country>/` (LinkedIn and multi-market boards under `portals/global/`). For each board you want, ask your agent, swapping in its folder:
+
+> Copy https://github.com/ai-job-search-dev/community-portals/tree/main/portals/dk/jobindex-search into `.agents/skills/` and show me its code and what it does. Once I confirm, run `python3 tools/install_portal_clis.py` (Windows: `python tools\install_portal_clis.py`).
+
+`/setup` prints this prompt for the boards you name. To reinstall later, run from the repository root:
 
 ```bash
 python3 tools/install_portal_clis.py   # Windows: python tools\install_portal_clis.py
 ```
 
-It runs `bun install` in every portal CLI under `.agents/skills/*/cli/` - discovered, not listed, so a portal you add with `/add-portal` or copy from another fork is included on a fresh clone. Every install runs with `--ignore-scripts`, and a CLI whose `package.json` declares an install-time lifecycle script, `trustedDependencies` or `workspaces`, or that has a `bunfig.toml` or `.npmrc` beside it, is skipped and reported rather than run. `--dry-run` shows what it would install.
+It runs `bun install` in every portal CLI under `.agents/skills/*/cli/` - discovered, not listed, so a portal you copy from community-portals or add with `/add-portal` is included on a fresh clone. With no portal installed it does nothing. Every install runs with `--ignore-scripts`, and a CLI whose `package.json` declares an install-time lifecycle script, `trustedDependencies` or `workspaces`, or that has a `bunfig.toml` or `.npmrc` beside it, is skipped and reported rather than run. `--dry-run` shows what it would install.
 
-For `linkedin-search` and `freehire-search` the install is optional: both have zero runtime dependencies and run with plain `bun`; `bun install` only pulls TypeScript dev types.
+For zero-dependency portals such as `linkedin-search` and `freehire-search` the install is optional: they run with plain `bun`; `bun install` only pulls TypeScript dev types.
 
-If you're outside Denmark, you can generate an equivalent search skill for your local job board with `/add-portal` — it scaffolds the same CLI structure for any public portal and test-runs a live query before registering. See the "Job search tools" section in the README.
+If your job board has no portal yet, generate one with `/add-portal` — it scaffolds the same CLI structure for any public portal and test-runs a live query before registering — then contribute it to community-portals. See the "Job search tools" section in the README.
 
 ## 4. Run the setup interview
 
@@ -267,7 +271,7 @@ This creates `salary_data.json` which the `/apply` workflow uses for salary benc
 Find a job posting you're interested in, then:
 
 ```
-/apply https://jobindex.dk/job/1234567
+/apply https://boards.greenhouse.io/acme/jobs/1234567
 ```
 
 Or paste the job description directly:
@@ -307,7 +311,15 @@ Upstream keeps improving the methodology files your fork has personalized, so pl
 
 **Prefer releases over raw `master`.** Tagged [releases](../../releases) are weekly checkpoints of `master` that passed CI, each listing the PRs it contains on its release page ([CHANGELOG.md](CHANGELOG.md) covers releases up to 1.7.4). Updating to a tag pulls a stable, documented state instead of whatever `master` happens to be mid-review. Fetch tags with `git fetch upstream --tags` and merge a release (for example `git merge v1.0.0`) when you want stability; pull `master` directly only when you specifically want the latest unreleased changes. The steps below apply either way - substitute the release tag for `upstream/master` where you see it.
 
-1. **Commit your personalization - but know where those commits land.** `/setup` edits CLAUDE.md and the profile skill files in place; those edits are *yours*, and committing them is what lets updates merge cleanly. But a GitHub **fork of this repo is public** - forks of public repositories cannot be made private - so anything you commit *and push to a fork* is visible to anyone. If you want your profile in a remote at all, don't push it to a fork: create a **private** repository, push there, and add this repo as the `upstream` remote (`git remote add upstream https://github.com/ai-job-search-dev/ai-job-search.git`) to keep receiving updates. Committing locally without pushing is also fine. The genuinely sensitive files (tracker, salary data, `documents/`, application archives) are gitignored and never enter git either way. An uncommitted working tree is the most common reason `git pull` refuses to merge at all (`Your local changes ... would be overwritten`).
+1. **Commit your personalization - but know where those commits land.** `/setup` edits CLAUDE.md and the profile skill files in place; those edits are *yours*, and committing them is what lets updates merge cleanly. But a GitHub **fork of this repo is public** - forks of public repositories cannot be made private - so anything you commit *and push to a fork* is visible to anyone. If you want your profile in a remote at all, don't push it to a fork: use a **private** repository with this repo as the `upstream` remote, so you keep receiving updates (commands below). Committing locally without pushing is also fine. The genuinely sensitive files (tracker, salary data, `documents/`, application archives) are gitignored and never enter git either way. An uncommitted working tree is the most common reason `git pull` refuses to merge at all (`Your local changes ... would be overwritten`).
+
+   To create the private repository from a clone whose `origin` is still this repo:
+   ```bash
+   git remote rename origin upstream
+   gh repo create ai-job-search --private --source=. --remote=origin --push
+   gh repo set-default <your-github-username>/ai-job-search
+   ```
+   If you already forked, your clone has an `upstream` remote and `origin` is the public fork: replace the first line with `git remote remove origin`, and pick a different repository name, because the fork already uses `ai-job-search`.
 2. **Preview what changed before pulling:**
    ```bash
    git remote add upstream https://github.com/ai-job-search-dev/ai-job-search.git   # first time only, if you cloned your own fork
@@ -327,13 +339,24 @@ Upstream keeps improving the methodology files your fork has personalized, so pl
      Forks also inherit a `.github/workflows/upstream-watch.yml` that runs this weekly and writes the result into a single rolling issue (it no-ops on the upstream template itself, and stays disabled on a fork until you enable Actions).
 3. **Merge normally.** `git merge upstream/master` (or `git pull`) three-way-merges upstream's edits around your personalization; because methodology edits rarely touch the lines `/setup` filled in, most updates land cleanly. A conflict in a personalized file is a *feature*, not a failure — it means upstream changed methodology in a section you customized, and the version marker plus its changelog commit tell you why. Resolve by keeping your data and adopting the methodology change around it.
 
+### Tracking your own directory without editing `security_guards.py`
+
+If your fork keeps a tracked placeholder under a personal-data ignore rule (for example a `leads/` folder with a `.gitkeep`), `tools/security_guards.py` rejects the `!leads/.gitkeep` negation because it is not in `ALLOWED_IGNORE_NEGATIONS`. Editing that set works, but every upstream change near it then conflicts on merge. Instead, list the negation in `.github/security-guards-local.txt`:
+
+```text
+# fork-only tracked placeholders
+!leads/.gitkeep
+```
+
+One negation per line; blank lines and `#` comments are ignored. The file can only *extend* the allowlist: any other line (a plain ignore rule, say) fails the guard, and a negation not listed here or in `ALLOWED_IGNORE_NEGATIONS` still fails. If the file is absent nothing changes. The upstream template never ships it, and the guard fails if it appears there (CI decides which side it is on from `GITHUB_REPOSITORY`).
+
 ## Troubleshooting
 
 ### "salary_data.json not found"
 This is expected if you haven't set up salary benchmarking. The `/apply` workflow skips this step automatically.
 
 ### Job search CLI tools not working
-Make sure Bun is installed and you ran `bun install` in each CLI directory. The tools require network access to fetch job listings.
+Make sure Bun is installed and you ran `python3 tools/install_portal_clis.py` after copying the portal into `.agents/skills/`. The tools require network access to fetch job listings.
 
 ### LaTeX compilation errors
 - CV: uses `lualatex` (pdflatex often fails on modern MiKTeX with `fontawesome5` font-expansion errors; lualatex handles the same sources cleanly)
@@ -344,7 +367,7 @@ Make sure Bun is installed and you ran `bun install` in each CLI directory. The 
 The cover letter template expects fonts in `cover_letters/OpenFonts/fonts/`. Make sure this directory exists and contains the Lato and Raleway font files.
 
 ### Stale `.claude/settings.local.json` from an older clone
-Shared Claude Code permissions now live in `.claude/settings.json`: an `allow` list scoped to the exact commands the workflow runs (each portal CLI by path, the `tools/` scripts and `salary_lookup.py`), an `ask` list that always prompts before the permission-defining files are edited or `git push` runs, and a `deny` list that blocks upload-shaped shell and reads of credential files in every mode. `SECURITY.md` has the full table. Earlier versions of this repo committed a broader `.claude/settings.local.json` that pre-approved `Bash(curl:*)`, `Bash(python:*)` and `Bash(bun:*)`. If you cloned before that change, git leaves the old file behind in your working copy, and its permissions still apply on top of `settings.json`. Delete it (or trim it to your own personal overrides):
+Shared Claude Code permissions now live in `.claude/settings.json`: an `allow` list scoped to the exact commands the workflow runs (the `tools/` scripts and `salary_lookup.py`; a portal CLI you copy in is pre-approved only inside its own skill, so `/scrape`, `/apply` and `/rank` prompt for it until you add its entry here by path, as `/add-portal` describes), an `ask` list that always prompts before the permission-defining files are edited or `git push` runs, and a `deny` list that blocks upload-shaped shell and reads of credential files in every mode. `SECURITY.md` has the full table. Earlier versions of this repo committed a broader `.claude/settings.local.json` that pre-approved `Bash(curl:*)`, `Bash(python:*)` and `Bash(bun:*)`. If you cloned before that change, git leaves the old file behind in your working copy, and its permissions still apply on top of `settings.json`. Delete it (or trim it to your own personal overrides):
 
 ```bash
 rm .claude/settings.local.json
