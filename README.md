@@ -125,7 +125,7 @@ cd ai-job-search
 
 ### 2. Add job portals for your market (optional)
 
-AI Job Search ships no job-board CLIs; without one, `/scrape` searches with WebSearch. Pick your boards in [community-portals](https://github.com/ai-job-search-dev/community-portals) (`portals/<country>/`, or `portals/global/` for LinkedIn and multi-market boards), and ask your agent, swapping in your board's folder:
+AI Job Search ships no job-board CLIs; without one, `/scrape` searches with WebSearch. 🇧🇷 This Brazilian fork is the exception: it ships `gupy-search` and `vagas-com-search` in `.agents/skills/`. Pick your boards in [community-portals](https://github.com/ai-job-search-dev/community-portals) (`portals/<country>/`, or `portals/global/` for LinkedIn and multi-market boards), and ask your agent, swapping in your board's folder:
 
 > Copy https://github.com/ai-job-search-dev/community-portals/tree/main/portals/dk/jobindex-search into `.agents/skills/` and show me its code and what it does. Once I confirm, run `python3 tools/install_portal_clis.py` (Windows: `python tools\install_portal_clis.py`).
 
@@ -288,7 +288,7 @@ If you prefer doing it by hand, the manual route still works: update the guidanc
 
 ### Job search tools
 
-Job portal CLIs live in [community-portals](https://github.com/ai-job-search-dev/community-portals), not here: Danish boards under `portals/dk/`, and country-agnostic `linkedin-search` (LinkedIn's public listings, personal use only) and `freehire-search` (the [freehire.me](https://freehire.me) tech aggregator) under `portals/global/`. Each portal is owned by its users through CODEOWNERS. Copy the ones you need into `.agents/skills/` (see [step 2](#2-add-job-portals-for-your-market-optional)). If your board has no portal yet, run:
+Job portal CLIs live in [community-portals](https://github.com/ai-job-search-dev/community-portals), not here (this Brazilian fork additionally ships `gupy-search` and `vagas-com-search`): Danish boards under `portals/dk/`, and country-agnostic `linkedin-search` (LinkedIn's public listings, personal use only) and `freehire-search` (the [freehire.me](https://freehire.me) tech aggregator) under `portals/global/`. Each portal is owned by its users through CODEOWNERS. Copy the ones you need into `.agents/skills/` (see [step 2](#2-add-job-portals-for-your-market-optional)). If your board has no portal yet, run:
 
 ```
 /add-portal
