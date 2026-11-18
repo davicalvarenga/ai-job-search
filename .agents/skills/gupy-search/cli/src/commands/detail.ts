@@ -1,4 +1,4 @@
-import { htmlFetch, htmlToText, writeError, type JobDetail } from "../helpers.js"
+import { htmlFetch, htmlToText, stripInvisible, writeError, type JobDetail } from "../helpers.js"
 
 export interface DetailOpts {
   id: string
@@ -146,7 +146,8 @@ export async function runDetail(opts: DetailOpts): Promise<number> {
       return 1
     }
     const jobId = jobIdFromUrl(url)
-    const detail = fromNextData(html, jobId, url) ?? fromJsonLd(html, jobId, url)
+    const parsed = fromNextData(html, jobId, url) ?? fromJsonLd(html, jobId, url)
+    const detail = parsed ? stripInvisible(parsed) : null
     if (!detail || !detail.title) {
       writeError("Could not find job data on the career page; Gupy may have changed its page layout", "PARSE_FAILED")
       return 1

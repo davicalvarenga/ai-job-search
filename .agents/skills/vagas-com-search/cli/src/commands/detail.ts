@@ -1,4 +1,4 @@
-import { BASE_URL, htmlFetch, parseJobDetail, writeError } from "../helpers.js"
+import { BASE_URL, htmlFetch, parseJobDetail, stripInvisible, writeError } from "../helpers.js"
 
 export interface DetailOpts {
   id: string
@@ -26,7 +26,12 @@ export async function runDetail(opts: DetailOpts): Promise<number> {
       writeError("Job not found", "NOT_FOUND")
       return 1
     }
-    const job = parseJobDetail(html, id)
+    // A posting that is no longer listed redirects to a search page with no job title.
+    if (!/class="job-shortdescription__title"/i.test(html)) {
+      writeError("Job not found or no longer listed", "NOT_FOUND")
+      return 1
+    }
+    const job = stripInvisible(parseJobDetail(html, id))
 
     if (opts.format === "plain") {
       const lines = [

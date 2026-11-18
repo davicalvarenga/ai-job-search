@@ -7,6 +7,7 @@ description: >
   buscar vagas, procurar emprego, vaga de emprego, estágio, trainee, programa de
   trainee, desenvolvedor, job search Brazil, oportunidades de trabalho.
 context: fork
+enabled: true  # set to false to keep this portal installed but have /scrape skip it
 allowed-tools: Bash(bun run .agents/skills/vagas-com-search/cli/src/cli.ts *)
 ---
 
@@ -18,13 +19,16 @@ key, and **zero runtime dependencies** — it runs with just `bun`.
 
 ## ⚠️ Personal use only
 
-Vagas.com's `robots.txt` carries a **named block on Anthropic crawlers**
-(`User-agent: ClaudeBot` / `Claude-Web` / `anthropic-ai` → `Disallow: /`), separate
-from its general policy (which only restricts `/vagas/pesquisas` and account paths,
-and does not cover the search/detail paths this skill uses). The candidate chose to
-proceed anyway for personal job-search use. **Keep volume low, do not use this
-commercially or for bulk data collection, and re-evaluate if Vagas.com's terms or
-robots.txt tighten further.** Run it on your own responsibility.
+Vagas.com's terms of use (`/candidatos/termos-de-uso`, last updated 2026-07-01) have no
+clause on robots or automated access, but forbid reproducing the site's content without
+authorization (§12) and using any software that interferes with its operations (§5).
+Its `robots.txt` (checked 2026-11-18) restricts only `/vagas/pesquisas`, `/api/`, `/v1/`
+and account paths, none of which this skill uses. An earlier version of that file
+(mid-2026) also listed AI crawlers, `ClaudeBot`, `Claude-Web` and `anthropic-ai` among
+them, under `Disallow: /`; that section is no longer there, so re-check `robots.txt`
+before relying on this skill. **Use it only for your own job search: keep volume low,
+do not republish listings, and do not use it commercially or for bulk collection.**
+Run it on your own responsibility.
 
 ## Commands
 
@@ -97,7 +101,10 @@ All errors are written to **stderr** as `{ "error": "...", "code": "..." }` and 
   parsed with regex chunked per `<li class="vaga">` card.
 - `robots.txt` disallows `/vagas/pesquisas`, `/api/`, `/v1/`, and a handful of
   account/auth paths — none of those overlap with the search (`/vagas-de-...`) or
-  detail (`/vagas/v<id>/...`) paths this integration uses.
+  detail (`/vagas/v<id>/...`) paths this integration uses. The CLI identifies itself
+  as `vagas-com-cli/1.0` and makes one request per command.
+- A posting that is no longer listed redirects to a search page; `detail` reports it
+  as `NOT_FOUND` instead of returning an empty record.
 - Combining a specific `--query` with a specific `--location` can legitimately
   return zero results if no current posting matches that exact slug combination —
   this mirrors the site's own keyword-slug search behavior, not a parsing bug. Try
