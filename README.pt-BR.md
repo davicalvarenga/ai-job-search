@@ -8,7 +8,7 @@
 
 Um framework de candidatura a vagas movido a IA, construído sobre o [Claude Code](https://claude.com/claude-code). Faça um fork, preencha seu perfil, e deixe o Claude avaliar vagas, adaptar seu currículo, escrever cartas de apresentação e te preparar para entrevistas.
 
-Este fork adapta o projeto original de [Mads Lorentzen](https://github.com/MadsLorentzen/ai-job-search) (feito para o mercado dinamarquês) ao **mercado brasileiro**, adicionando integrações com **Gupy** e **Vagas.com** e ajustando o fluxo para gerar currículos e cartas no idioma da vaga.
+Este fork adapta o projeto original [AI Job Search](https://github.com/ai-job-search-dev/ai-job-search), de Mads Lorentzen (feito para o mercado dinamarquês), ao **mercado brasileiro**, adicionando integrações com **Gupy** e **Vagas.com** e ajustando o fluxo para gerar currículos e cartas no idioma da vaga.
 
 > Nota: este é um projeto open source independente, sem afiliação com a Anthropic. Claude Code é citado apenas como a ferramenta que o fluxo utiliza.
 
@@ -61,26 +61,15 @@ cd ai-job-search
 
 ### 2. Instale as ferramentas de busca
 
-Os três portais mais úteis para o Brasil têm **zero dependências de runtime** — rodam só com `bun`. O `bun install` apenas baixa tipos de desenvolvimento:
+Este fork já vem com os portais **Gupy** e **Vagas.com** em `.agents/skills/`. Eles têm **zero dependências de runtime** — rodam só com `bun`; o instalador apenas baixa tipos de desenvolvimento:
 
 ```bash
-cd .agents/skills/gupy-search/cli && bun install && cd ../../../..
-cd .agents/skills/vagas-com-search/cli && bun install && cd ../../../..
-cd .agents/skills/linkedin-search/cli && bun install && cd ../../../..
+python3 tools/install_portal_clis.py
 ```
 
-No PowerShell:
+No Windows: `python tools\install_portal_clis.py`.
 
-```powershell
-$tools = @("gupy-search", "vagas-com-search", "linkedin-search")
-foreach ($tool in $tools) {
-  Set-Location ".agents/skills/$tool/cli"
-  bun install
-  Set-Location "..\..\..\.."
-}
-```
-
-Os portais dinamarqueses do projeto original (`jobindex-search`, `jobnet-search` etc.) continuam no repositório — você pode ignorá-los ou removê-los do seu fork.
+Desde a versão em que o projeto original passou a manter os portais no repositório [community-portals](https://github.com/ai-job-search-dev/community-portals), nenhum outro portal vem instalado — nem o LinkedIn nem os dinamarqueses. Para usar o LinkedIn, veja [LinkedIn](#linkedin-via-community-portals) abaixo.
 
 ### 3. Monte seu perfil
 
@@ -145,9 +134,15 @@ bun run .agents/skills/vagas-com-search/cli/src/cli.ts search -q "estágio desen
 
 > ⚠️ **Uso pessoal apenas.** O `robots.txt` do Vagas.com bloqueia nominalmente crawlers da Anthropic. O skill acessa apenas as páginas públicas de busca, mas mantenha o volume baixo, não use comercialmente nem para coleta em massa, e reavalie se os termos do site mudarem. Uso por sua conta e risco — detalhes em `.agents/skills/vagas-com-search/SKILL.md`.
 
-### LinkedIn (`linkedin-search`)
+### LinkedIn (via community-portals)
 
-Usa os endpoints públicos e não autenticados `jobs-guest` do LinkedIn. Funciona para qualquer lugar do mundo via flag de localização:
+O `linkedin-search` é mantido no [community-portals](https://github.com/ai-job-search-dev/community-portals/tree/main/portals/global/linkedin-search). Para instalá-lo, peça ao seu agente:
+
+> Copie https://github.com/ai-job-search-dev/community-portals/tree/main/portals/global/linkedin-search para `.agents/skills/` e me mostre o código e o que ele faz. Depois que eu confirmar, rode `python3 tools/install_portal_clis.py`.
+
+Para o `/scrape`, `/apply` e `/rank` usarem o portal sem pedir aprovação a cada busca, adicione `Bash(bun run .agents/skills/linkedin-search/cli/src/cli.ts:*)` em `.claude/settings.json` e em `ALLOWED_PERMISSIONS` de `tools/security_guards.py`, como o `/add-portal` orienta.
+
+Ele usa os endpoints públicos e não autenticados `jobs-guest` do LinkedIn. Funciona para qualquer lugar do mundo via flag de localização:
 
 ```bash
 bun run .agents/skills/linkedin-search/cli/src/cli.ts search -q "desenvolvedor júnior" -l "Goiânia, Goiás, Brazil" --format table
@@ -207,8 +202,7 @@ ai-job-search/
 ├── .agents/skills/
 │   ├── gupy-search/                   # Gupy (Brasil) 🇧🇷
 │   ├── vagas-com-search/              # Vagas.com (Brasil) 🇧🇷
-│   ├── linkedin-search/               # LinkedIn (qualquer país)
-│   └── job*-search/                   # Portais dinamarqueses (projeto original)
+│   └── <outros>-search/               # Portais copiados do community-portals
 ├── cv/main_example.tex                # Template de CV (moderncv, estilo banking)
 ├── cover_letters/                     # Template de carta (cover.cls + fontes)
 ├── templates/                         # Templates próprios via /add-template
@@ -225,9 +219,9 @@ ai-job-search/
 
 ## Contribuindo
 
-Adaptações para o mercado brasileiro (novos portais, melhorias nos skills Gupy/Vagas.com, correções na documentação em português) são bem-vindas aqui via issue ou PR. Melhorias no framework central pertencem ao [projeto original](https://github.com/MadsLorentzen/ai-job-search) — leia o [CONTRIBUTING.md](CONTRIBUTING.md) para entender o que é mergeado lá e o que vive em forks.
+Adaptações para o mercado brasileiro (novos portais, melhorias nos skills Gupy/Vagas.com, correções na documentação em português) são bem-vindas aqui via issue ou PR. Melhorias no framework central pertencem ao [projeto original](https://github.com/ai-job-search-dev/ai-job-search) — leia o [CONTRIBUTING.md](CONTRIBUTING.md) para entender o que é mergeado lá e o que vive em forks.
 
-Mantém um fork adaptado a outro mercado? Registre na thread de [Community forks & adaptations](https://github.com/MadsLorentzen/ai-job-search/discussions/78) do projeto original.
+Mantém um fork adaptado a outro mercado? Registre na thread de [Community forks & adaptations](https://github.com/ai-job-search-dev/ai-job-search/discussions/78) do projeto original.
 
 ## Créditos
 

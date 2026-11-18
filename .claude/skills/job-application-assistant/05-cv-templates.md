@@ -1,5 +1,5 @@
 ---
-framework_version: 1.5.0
+framework_version: 1.4.8
 ---
 
 # CV Templates and Tailoring Guide
@@ -13,7 +13,7 @@ All CVs use the moderncv LaTeX package with the "banking" style and "blue" color
 **Output file:** `cv/main_<company>_<role>.tex`
 **Compile with:** **lualatex** on MiKTeX/TeX Live. pdflatex often fails on modern MiKTeX installs with `fontawesome5` font-expansion errors; lualatex handles the same sources cleanly.
 **Master reference:** `cv/main_example.tex` (comprehensive CV with all competencies, experience, and achievements - use as source when building targeted CVs)
-**Language:** Match the job posting's language (per `/apply` Step 2) - a Brazilian/Portuguese posting gets a Portuguese CV, not an English one. `main_example.tex` is written in Portuguese for this reason; translate section labels (e.g. "Professional Experience" -> "Experiência Profissional") along with the content when tailoring for a differently-languaged posting.
+**Language:** Match the job posting's language (per `/apply` Step 2) - a Brazilian/Portuguese posting gets a Portuguese CV, not an English one. When the master CV is in another language, translate the section labels (e.g. "Professional Experience" -> "Experiência Profissional") along with the content.
 
 ### Compile command
 
