@@ -1,4 +1,4 @@
-import { BASE_URL, htmlFetch, parseJobCards, slugify, writeError, type JobCard } from "../helpers.js"
+import { BASE_URL, htmlFetch, parseJobCards, slugify, stripInvisible, writeError, type JobCard } from "../helpers.js"
 
 export interface SearchOpts {
   query: string
@@ -46,7 +46,7 @@ function renderTable(cards: JobCard[]): string {
 export async function runSearch(opts: SearchOpts): Promise<number> {
   try {
     const html = await htmlFetch(buildUrl(opts))
-    let cards = parseJobCards(html).filter((c) => withinJobage(c, opts.jobage))
+    let cards = stripInvisible(parseJobCards(html)).filter((c) => withinJobage(c, opts.jobage))
     if (opts.limit !== undefined && opts.limit >= 0) cards = cards.slice(0, opts.limit)
 
     if (opts.format === "table") {

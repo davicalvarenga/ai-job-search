@@ -8,6 +8,7 @@ description: >
   buscar vagas, procurar emprego, job search Brazil, estágio, vaga de emprego,
   desenvolvedor júnior, trainee, oportunidades de trabalho.
 context: fork
+enabled: true  # set to false to keep this portal installed but have /scrape skip it
 allowed-tools: Bash(bun run .agents/skills/gupy-search/cli/src/cli.ts *)
 ---
 
@@ -91,7 +92,11 @@ All errors are written to **stderr** as `{ "error": "...", "code": "..." }` and 
   match — it will not catch remote roles headquartered elsewhere. For "my city or
   remote" searches, run two separate searches: one with `-l "<your city>"`
   and one with `--remote remote`, rather than combining both flags in one call.
-- `robots.txt` for `portal.gupy.io` has no
-  disallow rules — this integration only reads public data, no ToS restriction found.
+- Access rules (checked 2026-11-18, details in `url-reference.md`): `portal.gupy.io/robots.txt`
+  disallows nothing, and the company career pages (`<company>.gupy.io/robots.txt`) disallow
+  only `/companies` and `/candidates` — `detail` reads `/job/...`. Gupy publishes no terms
+  of use for the public job portal (only a candidate privacy notice, which says nothing about
+  automated access). The CLI identifies itself as `gupy-cli/1.0` and keeps to one request per
+  command.
 - Job IDs are numeric (e.g. `11602614`) and identify a job in results, but `detail` takes
   the result's `url`, not the id.

@@ -115,12 +115,18 @@ None of these overlap with `/vagas-de-...` (search) or `/vagas/v<id>` (detail).
 `/vagas/pesquisas` is a **different, specific path** from `/vagas/v<id>` — worth
 double-checking on any future robots.txt change since the prefix looks similar.
 
-The file **separately** names a block of AI crawlers — including `ClaudeBot`,
-`Claude-Web`, and `anthropic-ai` — with `Disallow: /` (the entire site), listed
-under a section commented "Crawlers de IA / LLM training". This is a specific,
-named restriction on Anthropic-affiliated agents, distinct from the general
-`User-agent: *` policy above (which only restricts `/vagas/pesquisas` and
-account/auth paths). The candidate was informed of this explicitly and chose to
-proceed for personal job-search use only — see the SKILL.md personal-use warning.
-Do not scale this integration up (higher volume, other users, commercial use)
-without re-reading that restriction.
+Checked 2026-11-18: the file has only the `User-agent: *` policy above. An earlier
+version (mid-2026) **separately** named a block of AI crawlers, `ClaudeBot`,
+`Claude-Web` and `anthropic-ai` among them, with `Disallow: /` (the entire site),
+under a section commented "Crawlers de IA / LLM training". That section is gone; if it
+comes back, this skill falls under it and should not be used.
+
+Terms of use: `https://www.vagas.com.br/candidatos/termos-de-uso` (last updated
+2026-07-01) have no clause on robots, crawlers or automated access. §5 forbids "qualquer
+dispositivo, software ou outro recurso que venha a interferir nas atividades e operações
+da Vagas.com" and §12 forbids reproducing "os conteúdos das telas do site", in whole or in
+part, without express authorization — hence the personal-use-only scope in `SKILL.md`.
+Do not scale this integration up (higher volume, other users, commercial use).
+
+User-Agent: `Mozilla/5.0 (compatible; vagas-com-cli/1.0)`; the site answers it normally
+(checked 2026-11-18).

@@ -115,6 +115,14 @@ data is server-rendered into the HTML. `detail` fetches the page and reads, in o
   integration only calls the same JSON endpoint the portal's own frontend calls.
 - `https://www.gupy.io/robots.txt` (the marketing site, different host) disallows
   only blog pagination/preview paths — irrelevant here since we never hit that host.
+- `https://<company>.gupy.io/robots.txt` (career pages, read by `detail`; checked
+  2026-11-18 on `vagas.gupy.io`): `Allow: /`, `Disallow: /companies`, `Disallow: /candidates`.
+  Job pages live under `/job/...`, which is allowed.
+- Terms: Gupy publishes no terms of use for the public job portal or for candidates
+  (checked 2026-11-18: the gupy.io and portal.gupy.io footers link only privacy notices;
+  the candidate privacy notice has no clause on automated access).
+- User-Agent: `Mozilla/5.0 (compatible; gupy-cli/1.0)`. Both hosts answer it normally
+  (checked 2026-11-18).
 
 ## Maintenance
 
